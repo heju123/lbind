@@ -1,0 +1,150 @@
+<div class="mam-entity-video mam-entity-page" ng-scope="video">
+    <mam-entity-top entity="inst.entity" site="{{inst.site}}" view-type="{{viewType}}"></mam-entity-top>
+    <div class="entity-content">
+        gregergweg
+        <div class="entity-c-left">
+            <div class="entity-view">
+                <mam-entity-viewer-video get-viewer="inst.getViewer(e)"></mam-entity-viewer-video>
+            </div>
+            <div class="c-left-bottom">
+                <div class="c-left-bottom-tabs">
+                    <div class="tabs">
+                        <ul class="nav nav-tabs">
+                            <li ng-class="{'active' : inst.tabs.leftBottom == 'catalog'}">
+                                <a ng-click="inst.tabs.change('catalog','leftBottom')">编目层</a>
+                            </li>
+                            <li ng-class="{'active' : inst.tabs.leftBottom == 'keyframes'}">
+                                <a ng-click="inst.tabs.change('keyframes','leftBottom')">标记点</a>
+                            </li>
+                            <!-- <li ng-class="{'active' : inst.tabs.leftBottom == 'dismantling'}">
+                                <a ng-click="inst.tabs.change('dismantling','leftBottom')">智能拆条</a>
+                            </li> -->
+                        </ul>
+                    </div>
+                </div>
+                <div class="c-left-bottom-content">
+                    <div class="content-tab" ng-show="inst.tabs.leftBottom == 'catalog'">
+                        <mam-catalog-tree catalog-data="inst.catalogData" entity-data="inst.entity.entitydata" frame-rate="inst.frameRate"
+                            can-edit="inst.canEdit"></mam-catalog-tree>
+                    </div>
+                    <div class="content-tab" ng-show="inst.tabs.leftBottom == 'keyframes'">
+                        <mam-keyframes markeyframes="inst.entity.markeyframes" entity="inst.entity"
+                                       can-edit="inst.canEdit"></mam-keyframes>
+                    </div>
+                    <!-- <div class="content-tab" ng-show="inst.tabs.leftBottom == 'dismantling'">
+                        <mam-dismantling> </mam-dismantling>
+                    </div> -->
+                </div>
+            </div>
+        </div>
+        fdfdsf
+        <div class="entity-c-right">
+            <div class="c-right-top">
+                <div class="tabs">
+                    <ul class="nav nav-tabs">
+                        <li ng-show="inst.showTagging" ng-class="{'active' : inst.tabs.rigthTop == 'tagging'}" ng-click="inst.tabs.change('tagging','rigthTop')">
+                            <a>智能标记</a>
+                        </li>
+                        <li ng-class="{'active' : inst.tabs.rigthTop == 'baseMetadate'}" ng-click="inst.tabs.change('baseMetadate','rigthTop')">
+                            <a>内容元数据</a>
+                        </li>
+                        <li ng-class="{'active' : inst.tabs.rigthTop == 'catalogMetadate'}" ng-click="inst.tabs.change('catalogMetadate','rigthTop')"
+                            ng-show="inst.selectedCatalog && inst.selectedCatalog.code !== 'program'">
+                            <a>编目层元数据</a>
+                        </li>
+                        <li ng-class="{'active' : inst.tabs.rigthTop == 'copyrightMetadate'}" ng-click="inst.tabs.change('copyrightMetadate','rigthTop')"
+                            ng-if="inst.config.copyrightEnable">
+                            <a>版权元数据</a>
+                        </li>
+                        <li ng-show="inst.showTags" ng-class="{'active' : inst.tabs.rigthTop == 'tags'}" ng-click="inst.tabs.change('tags','rigthTop')">
+                            <a>标签</a>
+                        </li>
+                        <li ng-class="{'active' : inst.tabs.rigthTop == 'keyframeMetadata'}" ng-click="inst.tabs.change('keyframeMetadata','rigthTop')"
+                            ng-show="inst.selectedKeyframeMetadata">
+                            <a>标记点</a>
+                        </li>
+                        <!-- <li ng-class="{'active' : inst.tabs.rigthTop == 'checkEntityInfo'}" ng-click="inst.tabs.change('checkEntityInfo','rigthTop')">
+                            <a>审片信息</a>
+                        </li> -->
+                        <li ng-class="{'active' : inst.tabs.rigthTop == 'datasetInfo'}" ng-click="inst.tabs.change('datasetInfo','rigthTop')"
+                            ng-if="inst.datasetInfo && inst.datasetInfo.length > 0">
+                            <a>关联信息</a>
+                        </li>
+                        <li ng-class="{'active' : inst.tabs.rigthTop == 'comment'}" ng-click="inst.tabs.change('comment','rigthTop')">
+                            <a>评论</a>
+                        </li>
+                        <li ng-class="{'active' : inst.tabs.rigthTop == 'attachment'}" ng-click="inst.tabs.change('attachment','rigthTop')">
+                            <a>附件</a>
+                        </li>
+                        <li ng-class="{'active' : inst.tabs.rigthTop == 'history'}" ng-click="inst.tabs.change('history','rigthTop')">
+                            <a>操作历史</a>
+                        </li>
+                        <mam-entity-file-list group-info="inst.entity.groupInfo"></mam-entity-file-list>
+                    </ul>
+                </div>
+            </div>
+            <div class="c-right-content">
+                <div class="content-tab tagging" ng-show="inst.showTagging && inst.tabs.rigthTop == 'tagging'">
+                    <mam-content-tagging get-interactor="inst.getTaggingInteractor(e)"></mam-content-tagging>
+                </div>
+                <div class="content-tab" ng-show="inst.tabs.rigthTop == 'baseMetadate'">
+                    <mam2-metadata-form items="inst.entity.entitydata" type="{{inst.baseMetadataEditOpe.editable?'edit':'browse'}}"
+                                        twoway="false" get-func="inst.getBaseMetaValidFun(func)"
+                                        on-programform-change="inst.onBaseMetaProgramformChange(value, oldValue)">
+                    </mam2-metadata-form>
+                    <mam-metadata-editbtns save-fun="inst.saveBaseMeta" metadata="inst.entity.entitydata"
+                                           get-ope-fun="inst.getBaseMetadataEditOpe(fun)" ng-if="inst.canEdit"></mam-metadata-editbtns>
+                </div>
+                <div class="content-tab" ng-show="inst.tabs.rigthTop == 'catalogMetadate'">
+                    <mam-catalog-metadata entity="inst.entity" catalog-data="inst.catalogData" current-catalog="inst.selectedCatalog"
+                                          can-edit="inst.canEdit"></mam-catalog-metadata>
+                </div>
+                <div class="content-tab" ng-show="inst.tabs.rigthTop == 'copyrightMetadate'">
+                    <mam-copyright-metadata entity="inst.entity"></mam-copyright-metadata>
+                </div>
+                <div class="content-tab tags" ng-show="inst.tabs.rigthTop == 'tags'">
+                    <mam-entity-tags entity="inst.entity" can-edit="inst.canEdit"></mam-entity-tags>
+                </div>
+                <div class="content-tab" ng-show="inst.tabs.rigthTop == 'keyframeMetadata'">
+                    <mam-keyframe-metadata entity="inst.entity" current-keyframe="inst.selectedKeyframeMetadata" can-edit="inst.canEdit"></mam-keyframe-metadata>
+                </div>
+                <div class="content-tab" ng-show="inst.tabs.rigthTop == 'checkEntityInfo'">
+                    <mam-check-entity-info content-id="{{contentId}}" content-type="HiveEntity"></mam-check-entity-info>
+                </div>
+                <div class="content-tab" ng-show="inst.tabs.rigthTop == 'datasetInfo' && inst.datasetInfo && inst.datasetInfo.length > 0">
+                    <mam-dataset-info dataset-info="inst.datasetInfo" site="{{inst.site}}" entity-plugin-path="{{entityPluginPath}}"></mam-dataset-info>
+                </div>
+                <div class="content-tab" ng-show="inst.tabs.rigthTop == 'comment'">
+                    <div class="comment-block">
+                        <div class="comment-label">我的评分：</div>
+                        <div class="comment-content">
+                            <mam-score content-id="{{contentId}}" content-type="HiveEntity" get-submit-score-fun="inst.getSubmitScoreFun(fun)"></mam-score>
+                        </div>
+                    </div>
+                    <div class="comment-block">
+                        <div class="comment-label">我的评论：</div>
+                        <div class="comment-content">
+                            <mam-comment content-id="{{contentId}}" content-type="HiveEntity" page-size="10" before-submit="inst.submitScoreFun"></mam-comment>
+                        </div>
+                    </div>
+                </div>
+                <div class="content-tab" ng-show="inst.tabs.rigthTop == 'attachment'">
+                    <mam-attachment content-id="{{inst.contentId}}" can-edit="inst.canEdit"></mam-attachment>
+                </div>
+                <div class="content-tab history" ng-show="inst.tabs.rigthTop == 'history'">
+                    <mam-entity-history content-id="inst.contentId" site-code="inst.site"></mam-entity-history>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script id="setCatalog-dropdown-btns" type="text/ng-template">
+        <div class="setCatalog-dropdown">
+            <div class="dropdown-item" ng-repeat="catalog in inst.catalogData" ng-click="addCatalog(catalog)"
+                 ng-if="catalog.code !== 'program'">
+                <i class="fa" ng-class="{'fa-television' : catalog.code === 'program','fa-film' : catalog.code === 'sequence','fa-camera-retro' : catalog.code === 'scene','fa-video-camera' : catalog.code === 'shot'}"></i>
+                <span>{{catalog.alias}}</span>
+            </div>
+        </div>
+    </script>
+</div>

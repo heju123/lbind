@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>测试页面</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="libs/jquery.min.js" type="text/javascript"></script>
+</head>
+<style>
+    body{
+        height: 100vh;
+    }
+</style>
+<body>
+    <div id="app">
+    </div>
+</body>
+</html>
+<script>
+    (function(){
+        $.get('template.html').then((res)=>{
+            var test = new Lbind({
+                el: '#app',
+                template: res
+            });
+        });
+    })();
+</script>

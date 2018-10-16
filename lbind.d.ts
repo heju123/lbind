@@ -1,0 +1,1 @@
+declare var require: (type: string) => any;
