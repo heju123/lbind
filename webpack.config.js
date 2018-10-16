@@ -40,19 +40,6 @@ module.exports = function (arg1, mode) {
                     verbose: true,
                     dry: false
                 }),
-            new HtmlWebpackPlugin({
-                filename: 'index.html',
-                template: 'test/index.html',
-                inject: true,
-                minify: {
-                    removeComments: true,
-                    collapseWhitespace: true,
-                    removeAttributeQuotes: true,
-                    minifyCSS: true
-                },
-                // necessary to consistently work with multiple chunks via CommonsChunkPlugin
-                chunksSortMode: 'dependency'
-            }),
             new webpack.HotModuleReplacementPlugin()
         ],
         devServer: {
@@ -65,6 +52,19 @@ module.exports = function (arg1, mode) {
 
     if (!mode || mode.mode == 'development') {
         config.output.filename = '[name].js';
+        config.plugins.push(new HtmlWebpackPlugin({
+            filename: 'index.html',
+            template: 'test/index.html',
+            inject: true,
+            minify: {
+                removeComments: true,
+                collapseWhitespace: true,
+                removeAttributeQuotes: true,
+                minifyCSS: true
+            },
+            // necessary to consistently work with multiple chunks via CommonsChunkPlugin
+            chunksSortMode: 'dependency'
+        }));
     } else {
         config.devtool = "cheap-module-source-map";
         config.output.filename = '[name].min.js';
