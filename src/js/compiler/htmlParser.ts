@@ -10,17 +10,19 @@ export default class HtmlParser{
     }
 
     parseAttr(str : string) : any{
-        let reg = new RegExp(/(?<name>(\w|\-)+)\=\"(?<value>(\w|\-|\.|\=|\$|\s|,|\'|\(|\))*)\"/, 'g');
+        //idx=1：name；idx=3：value
+        let reg = new RegExp(/((\w|\-)+)\=\"((\w|\-|\.|\=|\$|\s|,|\'|\(|\))*)\"/, 'g');
         let result;
         let attrs = {};
         while ((result = reg.exec(str)) != null){
-            attrs[result.groups.name] = result.groups.value;
+            attrs[result[1]] = result[3];
         }
         return attrs;
     }
 
     parse() : VNode{
-        let reg = new RegExp(/(\<(?<tagName>(\w|\-)+)(?<attributes>(.|\n|\r)*?)\>)|(\<\/(?<tagEnd>(\w|\-)+)\>)/, 'g');
+        //idx=2：tagName；idx=4：attributes；idx=7：tagEnd
+        var reg = new RegExp(/(\<((\w|\-)+)((.|\n|\r)*?)\>)|(\<\/((\w|\-)+)\>)/, 'g');
         let result;
         let all = [];
         while ((result = reg.exec(this.html)) != null){
@@ -30,10 +32,10 @@ export default class HtmlParser{
         let parent : VNode;
         let vnode : VNode;
         all.forEach((match)=>{
-            if (match.groups.tagName)
+            if (match[2])
             {
                 vnode = new VNode({
-                    tagName: match.groups.tagName,
+                    tagName: match[2],
                     templateIndex: match.index
                 });
                 if (parent)
@@ -45,18 +47,18 @@ export default class HtmlParser{
                 {
                     this.rootNode = vnode;
                 }
-                if (match.groups.attributes)
+                if (match[4])
                 {
-                    vnode.attributes = this.parseAttr(match.groups.attributes);
+                    vnode.attributes = this.parseAttr(match[4]);
                 }
                 parent = vnode;
                 nodeStack.push(vnode);
             }
-            else if (match.groups.tagEnd)
+            else if (match[7])
             {
                 let popItem = nodeStack.pop();
                 parent = popItem.parent;
-                // console.log("aaaaaaaaaaaaaaaaa",this.html.substring(popItem.templateIndex, match.index + match.groups.tagEnd.length + 3));
+                // console.log("aaaaaaaaaaaaaaaaa",this.html.substring(popItem.templateIndex, match.index + match[7].length + 3));
             }
         });
         return this.rootNode;

@@ -24,7 +24,8 @@ class Main {
 (<any>window).Lbind = Main;
 
 // function attr(str){
-//     var reg = new RegExp(/(?<name>(\w|\-)+)\=\"(?<value>(\w|\-|\.|\=|\$|\s|,|\'|\(|\))*)\"/, 'g');
+//     //idx=1：name；idx=3：value
+//     let reg = new RegExp(/((\w|\-)+)\=\"((\w|\-|\.|\=|\$|\s|,|\'|\(|\))*)\"/, 'g');
 //     var result;
 //     while ((result = reg.exec(str)) != null){
 //         console.log("aaaaaaaaaaaaaaa",result);
@@ -35,11 +36,11 @@ class Main {
 //     var result;
 //     var ret = [];
 //     while ((result = reg.exec(str)) != null){
-//         console.log("ddddddddddddddd", result, result.index, result[0].length);
-//         //attr(result.groups.attributes);
+//         //console.log("ddddddddddddddd", result, result.index, result[0].length);
+//         attr(result.groups.attributes);
 //         //ret.push(result);
 //     }
 //     return ret;
 // }
-// var html = require('./template.html');
+// var html = res;
 // var ret = nodes(html);

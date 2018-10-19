@@ -2,7 +2,7 @@
   "name": "lbind",
   "version": "1.0.0",
   "description": "lbind",
-  "main": "dist/app.js",
+  "main": "dist/lbind.min.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/heju123/plutojs.git"
