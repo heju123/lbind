@@ -20,9 +20,13 @@
 <script>
     (function(){
         $.get('template.html').then((res)=>{
+            var model = {
+                metadata: '元数据测试'
+            };
             var test = new Lbind({
                 el: '#app',
-                template: res
+                template: res,
+                model: model
             });
         });
     })();

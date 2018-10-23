@@ -2,7 +2,7 @@ export default class VNode{
     id: number;
     tagName: string;
     attributes: any;
-    children: Array<any> = [];
+    children: Array<VNode> = [];
     parent: VNode;
     templateIndex: number;
     dom: HTMLElement;
@@ -24,32 +24,5 @@ export default class VNode{
         {
             this.templateIndex = attr.templateIndex
         }
-    }
-
-    generateDom() : HTMLElement{
-        this.dom = $('<' + this.tagName + '></' + this.tagName + '>')[0];
-
-        for (let key in this.attributes)
-        {
-            this.dom.setAttribute(key, this.attributes[key]);
-        }
-
-        if (this.children && this.children.length > 0)
-        {
-            let childDom : HTMLElement;
-            this.children.forEach((child)=>{
-                if (child instanceof VNode)
-                {
-                    childDom = child.generateDom();
-                    this.dom.appendChild(childDom);
-                }
-                else if (typeof(child) === 'string')
-                {
-                    let txtNode = document.createTextNode(child);
-                    this.dom.appendChild(txtNode);
-                }
-            });
-        }
-        return this.dom;
     }
 }

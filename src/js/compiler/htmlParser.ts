@@ -1,5 +1,6 @@
 import Stack from "@/js/structure/stack";
 import VNode from "@/js/vdom/vNode";
+import TextNode from "@/js/vdom/textNode";
 
 export default class HtmlParser{
     html : string;
@@ -22,7 +23,7 @@ export default class HtmlParser{
     }
 
     /** 根据上一个匹配项的结束位置和下一个匹配项的开始位置获取中间的文本信息 */
-    parseText(lastEndIdx : number, matchIdx : number) : string{
+    extractText(lastEndIdx : number, matchIdx : number) : string{
         if (matchIdx - lastEndIdx > 1)
         {
             let cutTxt = this.html.substring(lastEndIdx + 1, matchIdx);
@@ -35,11 +36,16 @@ export default class HtmlParser{
         return undefined;
     }
 
-    parseNodeText(parent : VNode, lastEndIdx : number, matchIdx : number){
-        let txtContent = this.parseText(lastEndIdx, matchIdx);
+    /** 抓取中间的文本信息 */
+    extractNodeText(parent : VNode, lastEndIdx : number, matchIdx : number){
+        let txtContent = this.extractText(lastEndIdx, matchIdx);
         if (txtContent)
         {
-            parent.children.push(txtContent);
+            let node = new TextNode({
+                templateIndex: lastEndIdx + 1,
+                text: txtContent
+            });
+            parent.children.push(node);
         }
     }
 
@@ -58,7 +64,7 @@ export default class HtmlParser{
         all.forEach((match)=>{
             if (match[2])
             {
-                this.parseNodeText(parent, lastEndIdx, match.index);
+                this.extractNodeText(parent, lastEndIdx, match.index);
                 vnode = new VNode({
                     tagName: match[2],
                     templateIndex: match.index
@@ -81,7 +87,7 @@ export default class HtmlParser{
             }
             else if (match[8])
             {
-                this.parseNodeText(parent, lastEndIdx, match.index);
+                this.extractNodeText(parent, lastEndIdx, match.index);
                 let popItem = nodeStack.pop();
                 if (popItem)
                 {

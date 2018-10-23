@@ -46,7 +46,7 @@
                             <a>智能标记</a>
                         </li>
                         <li ng-class="{'active' : inst.tabs.rigthTop == 'baseMetadate'}" ng-click="inst.tabs.change('baseMetadate','rigthTop')">
-                            <a>内容元数据</a>
+                            <a>{{metadata}}</a>
                         </li>
                         <li ng-class="{'active' : inst.tabs.rigthTop == 'catalogMetadate'}" ng-click="inst.tabs.change('catalogMetadate','rigthTop')"
                             ng-show="inst.selectedCatalog && inst.selectedCatalog.code !== 'program'">
@@ -54,7 +54,7 @@
                         </li>
                         <li ng-class="{'active' : inst.tabs.rigthTop == 'copyrightMetadate'}" ng-click="inst.tabs.change('copyrightMetadate','rigthTop')"
                             ng-if="inst.config.copyrightEnable">
-                            <a>版权元数据</a>
+                            <a>gergre{{copyright}}fsdgrg{{copyright2}}</a>
                         </li>
                         <li ng-show="inst.showTags" ng-class="{'active' : inst.tabs.rigthTop == 'tags'}" ng-click="inst.tabs.change('tags','rigthTop')">
                             <a>标签</a>
