@@ -5,7 +5,7 @@ export default class VNode{
     children: Array<VNode> = [];
     parent: VNode;
     templateIndex: number;
-    dom: HTMLElement;
+    dom: HTMLElement | Text;
 
     constructor(attr){
         if (attr.id)

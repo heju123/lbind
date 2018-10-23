@@ -19,7 +19,7 @@ export default class Compiler{
         let modelValue;
         while ((result = reg.exec(command)) != null){
             regExp = new RegExp(result[0], 'g');
-            modelValue = evalUtil.evalDotSyntax(command, this.model);
+            modelValue = evalUtil.evalDotSyntax(result[1], this.model);
             if (modelValue)
             {
                 ret = ret.replace(regExp, modelValue);
@@ -33,6 +33,7 @@ export default class Compiler{
         {
             let text = this.generateText(node.text);
             let textDom : Text = document.createTextNode(text);
+            node.dom = textDom;
             return textDom;
         }
         else
@@ -50,6 +51,7 @@ export default class Compiler{
                     dom.appendChild(childDom);
                 });
             }
+            node.dom = dom;
             return dom;
         }
     }
