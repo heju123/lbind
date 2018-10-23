@@ -68,7 +68,7 @@
                         </li> -->
                         <li ng-class="{'active' : inst.tabs.rigthTop == 'datasetInfo'}" ng-click="inst.tabs.change('datasetInfo','rigthTop')"
                             ng-if="inst.datasetInfo && inst.datasetInfo.length > 0">
-                            <a>关联信息</a>
+                            <a>关联<span>3333</span>信息</a>
                         </li>
                         <li ng-class="{'active' : inst.tabs.rigthTop == 'comment'}" ng-click="inst.tabs.change('comment','rigthTop')">
                             <a>评论</a>
@@ -116,13 +116,14 @@
                 </div>
                 <div class="content-tab" ng-show="inst.tabs.rigthTop == 'comment'">
                     <div class="comment-block">
-                        <div class="comment-label">我的评分：</div>
+                        <div class="comment-label">我的
+                            评分：</div>
                         <div class="comment-content">
                             <mam-score content-id="{{contentId}}" content-type="HiveEntity" get-submit-score-fun="inst.getSubmitScoreFun(fun)"></mam-score>
                         </div>
                     </div>
                     <div class="comment-block">
-                        <div class="comment-label">我的评论：</div>
+                        <div class="comment-label">我的  评论：</div>
                         <div class="comment-content">
                             <mam-comment content-id="{{contentId}}" content-type="HiveEntity" page-size="10" before-submit="inst.submitScoreFun"></mam-comment>
                         </div>

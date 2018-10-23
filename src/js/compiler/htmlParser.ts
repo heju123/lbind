@@ -7,6 +7,7 @@ export default class HtmlParser{
 
     constructor(html : string){
         this.html = html;
+        this.html = this.html.replace(/\<\!\-\-(.|\n|\r)*\-\-\>/g, '');
     }
 
     parseAttr(str : string) : any{
@@ -20,6 +21,28 @@ export default class HtmlParser{
         return attrs;
     }
 
+    /** 根据上一个匹配项的结束位置和下一个匹配项的开始位置获取中间的文本信息 */
+    parseText(lastEndIdx : number, matchIdx : number) : string{
+        if (matchIdx - lastEndIdx > 1)
+        {
+            let cutTxt = this.html.substring(lastEndIdx + 1, matchIdx);
+            if (cutTxt)
+            {
+                cutTxt = cutTxt.replace(/^(\s|\r|\n)*|(\s|\r|\n)*$/g, '');
+            }
+            return cutTxt;
+        }
+        return undefined;
+    }
+
+    parseNodeText(parent : VNode, lastEndIdx : number, matchIdx : number){
+        let txtContent = this.parseText(lastEndIdx, matchIdx);
+        if (txtContent)
+        {
+            parent.children.push(txtContent);
+        }
+    }
+
     parse() : VNode{
         //idx=2：tagName；idx=4：attributes；idx=7：tagEnd
         var reg = new RegExp(/(\<((\w|\-)+)((.|\n|\r)*?)\>)|(\<\/((\w|\-)+)\>)/, 'g');
@@ -31,9 +54,11 @@ export default class HtmlParser{
         let nodeStack : Stack = new Stack();
         let parent : VNode;
         let vnode : VNode;
+        let lastEndIdx : number = 0;
         all.forEach((match)=>{
             if (match[2])
             {
+                this.parseNodeText(parent, lastEndIdx, match.index);
                 vnode = new VNode({
                     tagName: match[2],
                     templateIndex: match.index
@@ -56,10 +81,11 @@ export default class HtmlParser{
             }
             else if (match[7])
             {
+                this.parseNodeText(parent, lastEndIdx, match.index);
                 let popItem = nodeStack.pop();
                 parent = popItem.parent;
-                // console.log("aaaaaaaaaaaaaaaaa",this.html.substring(popItem.templateIndex, match.index + match[7].length + 3));
             }
+            lastEndIdx = match.index + match[0].length - 1;
         });
         return this.rootNode;
     }

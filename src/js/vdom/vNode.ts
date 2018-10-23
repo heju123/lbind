@@ -2,7 +2,7 @@ export default class VNode{
     id: number;
     tagName: string;
     attributes: any;
-    children: Array<VNode> = [];
+    children: Array<any> = [];
     parent: VNode;
     templateIndex: number;
     dom: HTMLElement;
@@ -32,8 +32,16 @@ export default class VNode{
         {
             let childDom : HTMLElement;
             this.children.forEach((child)=>{
-                childDom = child.generateDom();
-                this.dom.appendChild(childDom);
+                if (child instanceof VNode)
+                {
+                    childDom = child.generateDom();
+                    this.dom.appendChild(childDom);
+                }
+                else if (typeof(child) === 'string')
+                {
+                    let txtNode = document.createTextNode(child);
+                    this.dom.appendChild(txtNode);
+                }
             });
         }
         return this.dom;
