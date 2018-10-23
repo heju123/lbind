@@ -28,6 +28,12 @@ export default class VNode{
 
     generateDom() : HTMLElement{
         this.dom = $('<' + this.tagName + '></' + this.tagName + '>')[0];
+
+        for (let key in this.attributes)
+        {
+            this.dom.setAttribute(key, this.attributes[key]);
+        }
+
         if (this.children && this.children.length > 0)
         {
             let childDom : HTMLElement;

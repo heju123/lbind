@@ -7,7 +7,7 @@ export default class HtmlParser{
 
     constructor(html : string){
         this.html = html;
-        this.html = this.html.replace(/\<\!\-\-(.|\n|\r)*\-\-\>/g, '');
+        this.html = this.html.replace(/\<\!\-\-(.|\n|\r)*?\-\-\>/g, '');
     }
 
     parseAttr(str : string) : any{
@@ -44,8 +44,8 @@ export default class HtmlParser{
     }
 
     parse() : VNode{
-        //idx=2：tagName；idx=4：attributes；idx=7：tagEnd
-        var reg = new RegExp(/(\<((\w|\-)+)((.|\n|\r)*?)\>)|(\<\/((\w|\-)+)\>)/, 'g');
+        //idx=2：tagName；idx=4：attributes；idx=8：tagEnd
+        var reg = new RegExp(/(\<((\w|\-)+)(((\s|\r|\n)+(\w|\-)+\=\".*\")*?)\>)|(\<\/((\w|\-)+)\>)/, 'g');
         let result;
         let all = [];
         while ((result = reg.exec(this.html)) != null){
@@ -79,11 +79,14 @@ export default class HtmlParser{
                 parent = vnode;
                 nodeStack.push(vnode);
             }
-            else if (match[7])
+            else if (match[8])
             {
                 this.parseNodeText(parent, lastEndIdx, match.index);
                 let popItem = nodeStack.pop();
-                parent = popItem.parent;
+                if (popItem)
+                {
+                    parent = popItem.parent;
+                }
             }
             lastEndIdx = match.index + match[0].length - 1;
         });
