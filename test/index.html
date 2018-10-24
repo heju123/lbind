@@ -30,7 +30,15 @@
             var test = new Lbind({
                 el: '#app',
                 template: res,
-                data: model
+                model: model,
+                methods : {
+                    testClick(str, num, catalog, width){
+                        console.log(str, num, catalog, width);
+                    },
+                    getWidth(){
+                        return 333;
+                    }
+                }
             });
         });
     })();

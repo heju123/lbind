@@ -2,6 +2,7 @@ import VNode from "@/js/vdom/vNode";
 import TextNode from "@/js/vdom/textNode";
 import evalUtil from "@/js/utils/evalUtil";
 import Model from "@/js/model/model";
+import EventHandler from "@/js/event/eventHandler";
 
 /** 树形结构转换成dom元素 */
 export default class Compiler{
@@ -31,6 +32,27 @@ export default class Compiler{
         return ret;
     }
 
+    private createEventHandler(node : VNode, type : string, funStr : Function | string){
+        let handler = new EventHandler(type);
+        if (typeof(funStr) === 'string')
+        {
+            let func = new Function(undefined, funStr);
+            handler.callback = func;
+        }
+        else
+        {
+            handler.callback = funStr;
+        }
+        node.events.push(handler);
+    }
+
+    private disposeAttr(node : VNode, attrName : string, attrVal : string | Function){
+        if (attrName === 'lb-click')
+        {
+            this.createEventHandler(node, 'click', attrVal);
+        }
+    }
+
     private generateDom(node : VNode) : HTMLElement | Text{
         if (node instanceof TextNode)
         {
@@ -45,6 +67,7 @@ export default class Compiler{
             for (let key in node.attributes)
             {
                 dom.setAttribute(key, node.attributes[key]);
+                this.disposeAttr(node, key, node.attributes[key]);
             }
             if (node.children && node.children.length > 0)
             {

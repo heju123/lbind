@@ -1,3 +1,5 @@
+import EventHandler from "@/js/event/eventHandler";
+
 export default class VNode{
     id: number;
     tagName: string;
@@ -6,6 +8,7 @@ export default class VNode{
     parent: VNode;
     templateIndex: number;
     dom: HTMLElement | Text;
+    events: Array<EventHandler> = [];
 
     constructor(attr){
         if (attr.id)
