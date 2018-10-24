@@ -4,7 +4,7 @@ import VNode from "@/js/vdom/vNode";
 import Model from "@/js/model/model";
 import EventBus from "@/js/event/eventBus";
 
-export default abstract class MainComponent{
+export default abstract class Component{
     private el : HTMLElement;
     private compiler : Compiler;
     private vNode : VNode;
@@ -21,13 +21,13 @@ export default abstract class MainComponent{
     constructor(options : any){
         this.options = $.extend({}, this.defOpt, options);
         this.el = $(this.options.el)[0];
-        this.model = new Model(this.options.model);
+        this.model = new Model(this, this.options.model);
         let htmlParser = new HtmlParser(this.options.template);
         this.vNode = htmlParser.parse();
         this.compiler = new Compiler(this.vNode, this.model);
         this.el.appendChild(this.compiler.compile());
         this.eventBus = new EventBus(this, this.el, this.vNode);
-        this.eventBus.enableEvents();
+        this.eventBus.enableEvents();console.log(this.model);
         //methods
         if (!$.isEmptyObject(this.options.methods))
         {

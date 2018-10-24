@@ -21,9 +21,9 @@ export default class Compiler{
         let regExp;
         let modelValue;
         while ((result = reg.exec(node.text)) != null){
-            this.model.createModel(node, result[1]);
+            this.model.createModel(node, result[1], (newVal)=>{});
             regExp = new RegExp(result[0], 'g');
-            modelValue = evalUtil.evalDotSyntax(result[1], this.model.data);
+            modelValue = evalUtil.evalDotSyntax(result[1], this.model);
             if (modelValue)
             {
                 ret = ret.replace(regExp, modelValue);
@@ -51,6 +51,10 @@ export default class Compiler{
         {
             this.createEventHandler(node, 'click', attrVal);
         }
+        else if (attrName === 'lb-model')
+        {
+            node.create2WayBind(this.model, <string>attrVal, attrName);
+        }
     }
 
     private generateDom(node : VNode) : HTMLElement | Text{
@@ -64,6 +68,7 @@ export default class Compiler{
         else
         {
             let dom : HTMLElement = document.createElement(node.tagName);
+            node.dom = dom;
             for (let key in node.attributes)
             {
                 dom.setAttribute(key, node.attributes[key]);
@@ -77,7 +82,6 @@ export default class Compiler{
                     dom.appendChild(childDom);
                 });
             }
-            node.dom = dom;
             return dom;
         }
     }

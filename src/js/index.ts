@@ -1,6 +1,6 @@
-import MainComponent from "@/js/components/mainComponent";
+import Component from "@/js/components/component";
 
-class Main extends MainComponent{
+class Main extends Component{
     constructor(options : any){
         super(options);
     }

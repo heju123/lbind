@@ -25,7 +25,8 @@
                 catalog: {
                     name: '编目层对象测试',
                     type: 2
-                }
+                },
+                testInput: 'fdsfsdf'
             };
             var test = new Lbind({
                 el: '#app',
@@ -33,6 +34,7 @@
                 model: model,
                 methods : {
                     testClick(str, num, catalog, width){
+                        this.model.testInput = '123';
                         console.log(str, num, catalog, width);
                     },
                     getWidth(){

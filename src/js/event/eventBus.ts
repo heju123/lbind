@@ -2,29 +2,19 @@ import Event from "./event";
 import VNode from "@/js/vdom/vNode";
 import commonUtil from "@/js/utils/commonUtil";
 import EventHandler from "./eventHandler";
-import MainComponent from "@/js/components/mainComponent";
+import Component from "@/js/components/component";
 
 export default class EventBus{
-    private component : MainComponent;
+    private component : Component;
     private el : HTMLElement;
     private vNode : VNode;
 
-    constructor(component : MainComponent, el : HTMLElement, vNode : VNode){
+    constructor(component : Component, el : HTMLElement, vNode : VNode){
         this.component = component;
         this.vNode = vNode;
         this.el = el;
     }
 
-    addDomEventListener(dom : any, type : string, callback : Function){
-        if (window.addEventListener)
-        {
-            dom.addEventListener(type, callback, false);
-        }
-        else
-        {
-            dom.attachEvent("on" + type, callback);
-        }
-    }
     /** 触发事件 */
     triggerEvent(node : VNode, eventHandler : EventHandler, sourceEvent : any){
         let event = new Event(eventHandler.type);
@@ -53,7 +43,7 @@ export default class EventBus{
         });
     }
     enableEvents(){
-        this.addDomEventListener(this.el, 'click', (e)=>{
+        commonUtil.addDomEventListener(this.el, 'click', (e)=>{
             this.handleEvent('click', e);
         });
     }
