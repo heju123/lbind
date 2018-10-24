@@ -3,6 +3,7 @@ import TextNode from "@/js/vdom/textNode";
 import evalUtil from "@/js/utils/evalUtil";
 import Model from "@/js/model/model";
 
+/** 树形结构转换成dom元素 */
 export default class Compiler{
     root : VNode;
     model : Model;
@@ -12,13 +13,14 @@ export default class Compiler{
         this.model = model;
     }
 
-    private generateText(command : string) : string{
-        let ret : string = command;
+    private generateText(node : TextNode) : string{
+        let ret : string = node.text;
         let reg = new RegExp(/\{\{(.*?)\}\}/, 'g');
         let result;
         let regExp;
         let modelValue;
-        while ((result = reg.exec(command)) != null){
+        while ((result = reg.exec(node.text)) != null){
+            this.model.createModel(node, result[1]);
             regExp = new RegExp(result[0], 'g');
             modelValue = evalUtil.evalDotSyntax(result[1], this.model.data);
             if (modelValue)
@@ -32,7 +34,7 @@ export default class Compiler{
     private generateDom(node : VNode) : HTMLElement | Text{
         if (node instanceof TextNode)
         {
-            let text = this.generateText(node.text);
+            let text = this.generateText(node);
             let textDom : Text = document.createTextNode(text);
             node.dom = textDom;
             return textDom;

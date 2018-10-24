@@ -19,7 +19,7 @@ class Main {
         this.options = $.extend({}, this.defOpt, options);
         this.el = $(this.options.el)[0];
         this.model = new Model(this.options.data);
-        let htmlParser = new HtmlParser(this.options.template, this.model);
+        let htmlParser = new HtmlParser(this.options.template);
         this.vNode = htmlParser.parse();
         this.compiler = new Compiler(this.vNode, this.model);
         this.el.appendChild(this.compiler.compile());
