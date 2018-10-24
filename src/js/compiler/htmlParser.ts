@@ -1,19 +1,22 @@
 import Stack from "@/js/structure/stack";
 import VNode from "@/js/vdom/vNode";
 import TextNode from "@/js/vdom/textNode";
+import Model from "@/js/model/model";
 
 export default class HtmlParser{
     html : string;
     rootNode : VNode;
+    model : Model;
 
-    constructor(html : string){
+    constructor(html : string, model : Model){
         this.html = html;
         this.html = this.html.replace(/\<\!\-\-(.|\n|\r)*?\-\-\>/g, '');
+        this.model = model;
     }
 
     parseAttr(str : string) : any{
         //idx=1：name；idx=3：value
-        let reg = new RegExp(/((\w|\-)+)\=\"((\w|\-|\.|\=|\$|\s|,|\'|\(|\))*)\"/, 'g');
+        let reg = new RegExp(/((\w|\-)+)\=\"((\w|\-|\.|\=|\$|\s|,|;|\'|\(|\)|[\u4e00-\u9fa5])*)\"/, 'g');
         let result;
         let attrs = {};
         while ((result = reg.exec(str)) != null){
@@ -45,7 +48,16 @@ export default class HtmlParser{
                 templateIndex: lastEndIdx + 1,
                 text: txtContent
             });
+            this.createTextModel(node, txtContent);
             parent.children.push(node);
+        }
+    }
+
+    private createTextModel(node : VNode, txtContent : string){
+        let reg = new RegExp(/\{\{(.*?)\}\}/, 'g');
+        let result;
+        while ((result = reg.exec(txtContent)) != null){
+            this.model.createModel(node, result[1]);
         }
     }
 
@@ -62,36 +74,37 @@ export default class HtmlParser{
         let vnode : VNode;
         let lastEndIdx : number = 0;
         all.forEach((match)=>{
-            if (match[2])
-            {
+            if (match[2]) {
                 this.extractNodeText(parent, lastEndIdx, match.index);
                 vnode = new VNode({
                     tagName: match[2],
                     templateIndex: match.index
                 });
-                if (parent)
-                {
+                if (match[4]) {
+                    vnode.attributes = this.parseAttr(match[4]);
+                }
+                if (parent) {
                     vnode.parent = parent;
                     parent.children.push(vnode);
                 }
-                if (!this.rootNode)
-                {
+                if (!this.rootNode) {
                     this.rootNode = vnode;
                 }
-                if (match[4])
+                if (vnode.tagName !== 'input')
                 {
-                    vnode.attributes = this.parseAttr(match[4]);
+                    parent = vnode;
+                    nodeStack.push(vnode);
                 }
-                parent = vnode;
-                nodeStack.push(vnode);
             }
             else if (match[8])
             {
                 this.extractNodeText(parent, lastEndIdx, match.index);
-                let popItem = nodeStack.pop();
-                if (popItem)
+                if (match[8] !== 'input')
                 {
-                    parent = popItem.parent;
+                    let popItem = nodeStack.pop();
+                    if (popItem) {
+                        parent = popItem.parent;
+                    }
                 }
             }
             lastEndIdx = match.index + match[0].length - 1;

@@ -1,12 +1,13 @@
 import VNode from "@/js/vdom/vNode";
 import TextNode from "@/js/vdom/textNode";
 import evalUtil from "@/js/utils/evalUtil";
+import Model from "@/js/model/model";
 
 export default class Compiler{
     root : VNode;
-    model : Object;
+    model : Model;
 
-    constructor(root : VNode, model : Object){
+    constructor(root : VNode, model : Model){
         this.root = root;
         this.model = model;
     }
@@ -19,7 +20,7 @@ export default class Compiler{
         let modelValue;
         while ((result = reg.exec(command)) != null){
             regExp = new RegExp(result[0], 'g');
-            modelValue = evalUtil.evalDotSyntax(result[1], this.model);
+            modelValue = evalUtil.evalDotSyntax(result[1], this.model.data);
             if (modelValue)
             {
                 ret = ret.replace(regExp, modelValue);
@@ -38,7 +39,7 @@ export default class Compiler{
         }
         else
         {
-            let dom : HTMLElement = $('<' + node.tagName + '></' + node.tagName + '>')[0];
+            let dom : HTMLElement = document.createElement(node.tagName);
             for (let key in node.attributes)
             {
                 dom.setAttribute(key, node.attributes[key]);

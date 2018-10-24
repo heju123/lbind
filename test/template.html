@@ -1,5 +1,7 @@
 <div class="mam-entity-video mam-entity-page" ng-scope="video">
     <mam-entity-top entity="inst.entity" site="{{inst.site}}" view-type="{{viewType}}"></mam-entity-top>
+    <input type="button" value="按钮测试123" lb-click="alert('32312');">
+    <button type="button" lb-click="">改变点什么</button>
     <div class="entity-content">
         gregergweg
         <div class="entity-c-left">
@@ -50,7 +52,7 @@
                         </li>
                         <li ng-class="{'active' : inst.tabs.rigthTop == 'catalogMetadate'}" ng-click="inst.tabs.change('catalogMetadate','rigthTop')"
                             ng-show="inst.selectedCatalog && inst.selectedCatalog.code !== 'program'">
-                            <a>编目层元数据</a>
+                            <a>{{catalog.name}};type：{{catalog.type}}</a>
                         </li>
                         <li ng-class="{'active' : inst.tabs.rigthTop == 'copyrightMetadate'}" ng-click="inst.tabs.change('copyrightMetadate','rigthTop')"
                             ng-if="inst.config.copyrightEnable">
