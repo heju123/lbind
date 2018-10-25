@@ -10,6 +10,16 @@
         <option value="opel">Opel</option>
         <option value="audi">Audi</option>
     </select>
+    <div>
+        <input id="testCheckbox" type="checkbox" lb-model="topForm.testCheckbox">
+        <label for="testCheckbox">checkbox</label>
+    </div>
+    <div>
+        <input id="testRadio" type="radio" lb-model="topForm.testRadio">
+        <label for="testRadio">testRadio</label>
+    </div>
+    <div lb-if="this.model.topForm.testCheckbox">testIf1111111</div>
+    <div lb-if="!this.model.topForm.testCheckbox">testif2222222222</div>
     <div class="entity-content">
         gregergweg
         <div class="entity-c-left">

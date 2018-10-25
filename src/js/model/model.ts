@@ -18,6 +18,7 @@ export default class Model {
         {
             return undefined;
         }
+        let self = this;
         var value;
         Object.defineProperty(parent, name, {
             get : function(){
@@ -25,7 +26,7 @@ export default class Model {
             },
             set : function(newValue){
                 value = newValue;
-                callback.apply(this.component, [newValue]);
+                callback.apply(self.component, [newValue]);
             }
         });
         parent[name] = value;
@@ -68,7 +69,7 @@ export default class Model {
         });
     }
 
-    setModel(command : string, newVal : string){
+    setModel(command : string, newVal : string | boolean){
         let lastDot = command.lastIndexOf('.');
         if (lastDot === -1)
         {

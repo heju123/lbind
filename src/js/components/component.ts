@@ -17,9 +17,13 @@ export default abstract class Component{
         model: {},
         methods: {}
     };
+    private defComponents : any;
 
     constructor(options : any){
         this.options = $.extend({}, this.defOpt, options);
+        this.defComponents = {
+        };
+
         this.el = $(this.options.el)[0];
         this.model = new Model(this, this.options.model);
         let htmlParser = new HtmlParser(this.options.template, this);
@@ -36,5 +40,10 @@ export default abstract class Component{
                 this[key] = this.options.methods[key];
             }
         }
+    }
+
+    regenerateDom(){
+        this.el.innerHTML = "";
+        this.el.appendChild(this.compiler.compile());
     }
 }

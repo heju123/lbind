@@ -56,7 +56,7 @@ export default class HtmlParser{
 
     parse() : VNode{
         //idx=2：tagName；idx=4：attributes；idx=8：tagEnd
-        var reg = new RegExp(/(\<((\w|\-)+)(((\s|\r|\n)+(\w|\-)+\=\".*\")*?)\>)|(\<\/((\w|\-)+)\>)/, 'g');
+        var reg = new RegExp(/(\<((\w|\-)+)(((\s|\r|\n)+(\w|\-)+\=\".*?\")*?)\>)|(\<\/((\w|\-)+)\>)/, 'g');
         let result;
         let all = [];
         while ((result = reg.exec(this.html)) != null){

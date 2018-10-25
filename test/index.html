@@ -28,7 +28,8 @@
                 },
                 topForm: {
                     testInput: 'fdsfsdf',
-                    car: 'opel'
+                    car: 'opel',
+                    testCheckbox: true
                 }
             };
             var test = new Lbind({
@@ -44,8 +45,7 @@
                         return 333;
                     },
                     getValues(){
-                        console.log(this.model.topForm.testInput);
-                        console.log(this.model.topForm.car);
+                        console.log(this.model.topForm);
                     }
                 }
             });

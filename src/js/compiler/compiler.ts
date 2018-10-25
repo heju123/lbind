@@ -58,7 +58,21 @@ export default class Compiler{
         }
     }
 
+    private disposeIf(node : VNode){
+        if (node.attributes && node.attributes['lb-if'])
+        {
+            let command : string = node.attributes['lb-if'];
+            let func = new Function(undefined, command);
+            return func.apply(this.component, []);
+        }
+        return true;
+    }
+
     private generateDom(node : VNode) : HTMLElement | Text{
+        if (!this.disposeIf(node))
+        {
+            return undefined;
+        }
         if (node instanceof TextNode)
         {
             let text = this.generateText(node);
@@ -75,7 +89,10 @@ export default class Compiler{
                 let childDom : HTMLElement | Text;
                 node.children.forEach((child)=>{
                     childDom = this.generateDom(child);
-                    dom.appendChild(childDom);
+                    if (childDom)
+                    {
+                        dom.appendChild(childDom);
+                    }
                 });
             }
             for (let key in node.attributes)

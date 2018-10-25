@@ -51,17 +51,42 @@ export default class VNode{
                 this.component.model.createModel(modelKey, (newVal)=>{
                     if (this.dom)
                     {
-                        $(this.dom).val(newVal);
+                        if ((<HTMLInputElement>this.dom).type === 'checkbox'
+                            || (<HTMLInputElement>this.dom).type === 'radio')
+                        {
+                            if (newVal)
+                            {
+                                $(this.dom).prop('checked', true);
+                            }
+                            else
+                            {
+                                $(this.dom).prop('checked', false);
+                            }
+                        }
+                        else
+                        {
+                            $(this.dom).val(newVal);
+                        }
                     }
                 });
                 //dom to model
                 if (this.dom)
                 {
-                    if ((<Element>this.dom).tagName === 'INPUT' && (<HTMLInputElement>this.dom).type === 'text')//input
+                    if ((<Element>this.dom).tagName === 'INPUT')//input
                     {
-                        commonUtil.addDomEventListener(this.dom, 'input', (e)=>{
-                            this.component.model.setModel(modelKey, (<HTMLInputElement>this.dom).value);
-                        }, false);
+                        if ((<HTMLInputElement>this.dom).type === 'text')
+                        {
+                            commonUtil.addDomEventListener(this.dom, 'input', (e)=>{
+                                this.component.model.setModel(modelKey, (<HTMLInputElement>this.dom).value);
+                            }, false);
+                        }
+                        else if ((<HTMLInputElement>this.dom).type === 'checkbox'
+                            || (<HTMLInputElement>this.dom).type === 'radio')
+                        {
+                            commonUtil.addDomEventListener(this.dom, 'change', (e)=>{
+                                this.component.model.setModel(modelKey, (<HTMLInputElement>this.dom).checked);
+                            }, false);
+                        }
                     }
                     else if ((<Element>this.dom).tagName === 'SELECT')//input
                     {
