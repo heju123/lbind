@@ -43,7 +43,7 @@ export default class Model {
     createModel(command : string, callback : Function){
         let current : any = this;
         let oriCurrent : any = this.$originalData;
-        this.literateModelKey(command,(item, index)=>{
+        this.literateModelKey(command,(item, index, maxLen)=>{
             oriCurrent = oriCurrent[item];
             if (current[item])
             {
@@ -54,11 +54,25 @@ export default class Model {
             {
                 if (oriCurrent instanceof Array)
                 {
-                    this.defineProperty(current, item, [], callback);
+                    if (index === maxLen - 1)
+                    {
+                        this.defineProperty(current, item, [], callback);
+                    }
+                    else
+                    {
+                        current[item] = [];
+                    }
                 }
                 else
                 {
-                    this.defineProperty(current, item, {}, callback);
+                    if (index === maxLen - 1)
+                    {
+                        this.defineProperty(current, item, {}, callback);
+                    }
+                    else
+                    {
+                        current[item] = {};
+                    }
                 }
             }
             else

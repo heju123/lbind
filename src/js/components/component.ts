@@ -41,9 +41,4 @@ export default abstract class Component{
             }
         }
     }
-
-    regenerateDom(){
-        this.el.innerHTML = "";
-        this.el.appendChild(this.compiler.compile());
-    }
 }
