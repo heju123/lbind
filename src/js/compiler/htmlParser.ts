@@ -1,15 +1,18 @@
 import Stack from "@/js/structure/stack";
 import VNode from "@/js/vdom/vNode";
 import TextNode from "@/js/vdom/textNode";
+import Component from "@/js/components/component";
 
 /** template转换成树形结构 */
 export default class HtmlParser{
     html : string;
     rootNode : VNode;
+    component : Component;
 
-    constructor(html : string){
+    constructor(html : string, component : Component){
         this.html = html;
         this.html = this.html.replace(/\<\!\-\-(.|\n|\r)*?\-\-\>/g, '');
+        this.component = component;
     }
 
     parseAttr(str : string) : any{
@@ -44,7 +47,8 @@ export default class HtmlParser{
         {
             let node = new TextNode({
                 templateIndex: lastEndIdx + 1,
-                text: txtContent
+                text: txtContent,
+                component: this.component
             });
             parent.children.push(node);
         }
@@ -67,7 +71,8 @@ export default class HtmlParser{
                 this.extractNodeText(parent, lastEndIdx, match.index);
                 vnode = new VNode({
                     tagName: match[2],
-                    templateIndex: match.index
+                    templateIndex: match.index,
+                    component: this.component
                 });
                 if (match[4]) {
                     vnode.attributes = this.parseAttr(match[4]);

@@ -1,9 +1,10 @@
 <div class="mam-entity-video mam-entity-page" ng-scope="video">
     <mam-entity-top entity="inst.entity" site="{{inst.site}}" view-type="{{viewType}}"></mam-entity-top>
-    <input type="input" lb-model="testInput">
+    <input type="input" lb-model="topForm.testInput">
     <input type="button" value="按钮测试123" lb-click="alert('32312');">
     <button type="button" lb-click="this.testClick('123', 321, this.model.catalog, this.getWidth())">点击测试</button>
-    <select>
+    <button type="button" lb-click="this.getValues()">获取值</button>
+    <select lb-model="topForm.car">
         <option value="volvo">Volvo</option>
         <option value="saab">Saab</option>
         <option value="opel">Opel</option>

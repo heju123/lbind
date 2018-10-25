@@ -26,7 +26,10 @@
                     name: '编目层对象测试',
                     type: 2
                 },
-                testInput: 'fdsfsdf'
+                topForm: {
+                    testInput: 'fdsfsdf',
+                    car: 'opel'
+                }
             };
             var test = new Lbind({
                 el: '#app',
@@ -34,11 +37,15 @@
                 model: model,
                 methods : {
                     testClick(str, num, catalog, width){
-                        this.model.testInput = '123';
+                        this.model.topForm.testInput = '123';
                         console.log(str, num, catalog, width);
                     },
                     getWidth(){
                         return 333;
+                    },
+                    getValues(){
+                        console.log(this.model.topForm.testInput);
+                        console.log(this.model.topForm.car);
                     }
                 }
             });

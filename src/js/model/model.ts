@@ -5,8 +5,8 @@ import TextNode from "@/js/vdom/textNode";
 import Component from "@/js/components/component";
 
 export default class Model {
-    private component : Component;
     private $originalData : Object;
+    component : Component;
 
     constructor(component : Component, data : Object){
         this.component = component;
@@ -39,7 +39,7 @@ export default class Model {
         });
     }
 
-    createModel(node : VNode, command : string, callback : Function){
+    createModel(command : string, callback : Function){
         let current : any = this;
         let oriCurrent : any = this.$originalData;
         this.literateModelKey(command,(item, index)=>{
@@ -68,16 +68,24 @@ export default class Model {
         });
     }
 
-    setModel(node : VNode, command : string){
-        let current : any = this;
-        this.literateModelKey(command,(item, index, maxLen)=>{
-            if (current[item])
-            {
-                if (index === maxLen - 1)
+    setModel(command : string, newVal : string){
+        let lastDot = command.lastIndexOf('.');
+        if (lastDot === -1)
+        {
+            this[command] = newVal;
+        }
+        else
+        {
+            let cutStr = command.substring(0, lastDot);
+            let lastKey = command.substring(lastDot + 1, command.length);
+            let current : any = this;
+            this.literateModelKey(cutStr,(item, index, maxLen)=>{
+                if (current[item])
                 {
+                    current = current[item];
                 }
-            }
-            current = current[item];
-        });
+            });
+            current[lastKey] = newVal;
+        }
     }
 }

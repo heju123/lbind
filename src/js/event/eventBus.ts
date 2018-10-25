@@ -45,6 +45,7 @@ export default class EventBus{
     enableEvents(){
         commonUtil.addDomEventListener(this.el, 'click', (e)=>{
             this.handleEvent('click', e);
+            e.stopPropagation();
         });
     }
 }

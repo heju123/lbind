@@ -1,6 +1,7 @@
 import EventHandler from "@/js/event/eventHandler";
 import Model from "@/js/model/model";
 import commonUtil from "@/js/utils/commonUtil";
+import Component from "@/js/components/component";
 
 export default class VNode{
     id: number;
@@ -11,6 +12,7 @@ export default class VNode{
     templateIndex: number;
     dom: HTMLElement | Text;
     events: Array<EventHandler> = [];
+    component : Component;
 
     constructor(attr){
         if (attr.id)
@@ -29,25 +31,45 @@ export default class VNode{
         {
             this.templateIndex = attr.templateIndex
         }
+        if (attr.component)
+        {
+            this.component = attr.component
+        }
+    }
+
+    /** 创建单向绑定 */
+    createOnewayBind(modelKey : string, callback : Function){
+        this.component.model.createModel(modelKey, callback);
     }
 
     /** 创建双向绑定 */
-    create2WayBind(model : Model, modelKey : string, type : string){
+    create2WayBind(modelKey : string, type : string){
         switch (type)
         {
             case 'lb-model' :
-                model.createModel(this, modelKey, (newVal)=>{
+                //model to dom
+                this.component.model.createModel(modelKey, (newVal)=>{
                     if (this.dom)
                     {
-                        (<HTMLInputElement>this.dom).value = newVal;
-                        if ((<Element>this.dom).tagName === 'INPUT' && (<HTMLInputElement>this.dom).type === 'text')
-                        {
-                            commonUtil.addDomEventListener(this.dom, 'input', (e)=>{
-                                console.log('change');
-                            }, false);
-                        }
+                        $(this.dom).val(newVal);
                     }
                 });
+                //dom to model
+                if (this.dom)
+                {
+                    if ((<Element>this.dom).tagName === 'INPUT' && (<HTMLInputElement>this.dom).type === 'text')//input
+                    {
+                        commonUtil.addDomEventListener(this.dom, 'input', (e)=>{
+                            this.component.model.setModel(modelKey, (<HTMLInputElement>this.dom).value);
+                        }, false);
+                    }
+                    else if ((<Element>this.dom).tagName === 'SELECT')//input
+                    {
+                        commonUtil.addDomEventListener(this.dom, 'change', (e)=>{
+                            this.component.model.setModel(modelKey, (<HTMLInputElement>this.dom).value);
+                        }, false);
+                    }
+                }
                 break;
             default : break;
         }

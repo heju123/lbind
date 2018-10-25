@@ -3,15 +3,16 @@ import TextNode from "@/js/vdom/textNode";
 import evalUtil from "@/js/utils/evalUtil";
 import Model from "@/js/model/model";
 import EventHandler from "@/js/event/eventHandler";
+import Component from "@/js/components/component";
 
 /** 树形结构转换成dom元素 */
 export default class Compiler{
     root : VNode;
-    model : Model;
+    component : Component;
 
-    constructor(root : VNode, model : Model){
+    constructor(root : VNode, component : Component){
         this.root = root;
-        this.model = model;
+        this.component = component;
     }
 
     private generateText(node : TextNode) : string{
@@ -21,9 +22,9 @@ export default class Compiler{
         let regExp;
         let modelValue;
         while ((result = reg.exec(node.text)) != null){
-            this.model.createModel(node, result[1], (newVal)=>{});
+            node.createOnewayBind(result[1], (newVal)=>{});
             regExp = new RegExp(result[0], 'g');
-            modelValue = evalUtil.evalDotSyntax(result[1], this.model);
+            modelValue = evalUtil.evalDotSyntax(result[1], this.component.model);
             if (modelValue)
             {
                 ret = ret.replace(regExp, modelValue);
@@ -53,7 +54,7 @@ export default class Compiler{
         }
         else if (attrName === 'lb-model')
         {
-            node.create2WayBind(this.model, <string>attrVal, attrName);
+            node.create2WayBind(<string>attrVal, attrName);
         }
     }
 
@@ -69,11 +70,6 @@ export default class Compiler{
         {
             let dom : HTMLElement = document.createElement(node.tagName);
             node.dom = dom;
-            for (let key in node.attributes)
-            {
-                dom.setAttribute(key, node.attributes[key]);
-                this.disposeAttr(node, key, node.attributes[key]);
-            }
             if (node.children && node.children.length > 0)
             {
                 let childDom : HTMLElement | Text;
@@ -81,6 +77,11 @@ export default class Compiler{
                     childDom = this.generateDom(child);
                     dom.appendChild(childDom);
                 });
+            }
+            for (let key in node.attributes)
+            {
+                dom.setAttribute(key, node.attributes[key]);
+                this.disposeAttr(node, key, node.attributes[key]);
             }
             return dom;
         }
