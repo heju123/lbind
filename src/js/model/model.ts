@@ -54,25 +54,11 @@ export default class Model {
             {
                 if (oriCurrent instanceof Array)
                 {
-                    if (index === maxLen - 1)
-                    {
-                        this.defineProperty(current, item, [], callback);
-                    }
-                    else
-                    {
-                        current[item] = [];
-                    }
+                    this.defineProperty(current, item, [], callback);
                 }
                 else
                 {
-                    if (index === maxLen - 1)
-                    {
-                        this.defineProperty(current, item, {}, callback);
-                    }
-                    else
-                    {
-                        current[item] = {};
-                    }
+                    this.defineProperty(current, item, {}, callback);
                 }
             }
             else
