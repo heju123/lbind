@@ -3,90 +3,76 @@ import Compiler from "@/js/compiler/compiler";
 import VNode from "@/js/vdom/vNode";
 import TextNode from "@/js/vdom/textNode";
 import Component from "@/js/components/component";
+import commonUtil from "@/js/utils/commonUtil";
 
 export default class Model {
-    private $originalData : Object;
     component : Component;
+    data : Object;
+    structure : Object;
 
     constructor(component : Component, data : Object){
         this.component = component;
-        this.$originalData = data;
+        this.data = data;
+        this.structure = {};
+        this.craeteWatch(this.data, '');
     }
 
-    private defineProperty(parent : any, name : string, value : any, callback : Function){
+    private defineProp(parent : any, key : any, path : string){
+        let self = this;
+        let value;
+        let oriVal = parent[key];
+        let setFunc = function(newValue){
+            value = newValue;
+            let oldStruct = commonUtil.getValueByDot(self.structure, path);
+            if (oldStruct && oldStruct.type === 'object')
+            {
+                commonUtil.setValueByDot(self.structure, path, {});
+                self.craeteWatch(parent[key], path);
+            }
+            self.component.notifyWatcher(path, parent[key]);
+        };
+        Object.defineProperty(parent, key, {
+            get : function(){
+                return value;
+            },
+            set : setFunc
+        });
+        parent[key] = oriVal;
+        commonUtil.setValueByDot(self.structure, path, {
+            type: typeof(oriVal),
+            set: setFunc
+        });
+    }
+
+    private craeteWatch(parent : any, path : string){
         if (!parent)
         {
             return undefined;
         }
-        let self = this;
-        var value;
-        Object.defineProperty(parent, name, {
-            get : function(){
-                return value;
-            },
-            set : function(newValue){
-                value = newValue;
-                callback.apply(self.component, [newValue]);
-            }
-        });
-        parent[name] = value;
-    }
-
-    /** 遍历Model的key值 */
-    literateModelKey(command : string, callback : Function){
-        let itemsMatch = command.match(/(\w|\$)+/g);
-        itemsMatch.forEach((item, index)=>{
-            callback(item, index, itemsMatch.length);
-        });
-    }
-
-    createModel(command : string, callback : Function){
-        let current : any = this;
-        let oriCurrent : any = this.$originalData;
-        this.literateModelKey(command,(item, index, maxLen)=>{
-            oriCurrent = oriCurrent[item];
-            if (current[item])
-            {
-                current = current[item];
-                return;
-            }
-            if (typeof(oriCurrent) === 'object')
-            {
-                if (oriCurrent instanceof Array)
-                {
-                    this.defineProperty(current, item, [], callback);
-                }
-                else
-                {
-                    this.defineProperty(current, item, {}, callback);
-                }
-            }
-            else
-            {
-                this.defineProperty(current, item, oriCurrent, callback);
-            }
-            current = current[item];
-        });
-    }
-
-    setModel(command : string, newVal : string | boolean){
-        let lastDot = command.lastIndexOf('.');
-        if (lastDot === -1)
+        if (parent instanceof Array)
         {
-            this[command] = newVal;
+            parent.forEach((item, index)=>{
+                this.defineProp(parent, index, path === '' ? index.toString() : path + '.' + index.toString());
+                if (typeof(parent[index]) === 'object')
+                {
+                    this.craeteWatch(parent[index], path === '' ? index.toString() : path + '.' + index.toString());
+                }
+            });
         }
         else
         {
-            let cutStr = command.substring(0, lastDot);
-            let lastKey = command.substring(lastDot + 1, command.length);
-            let current : any = this;
-            this.literateModelKey(cutStr,(item, index, maxLen)=>{
-                if (current[item])
+            for (let key in parent)
+            {
+                this.defineProp(parent, key, path === '' ? key : path + '.' + key);
+                if (typeof(parent[key]) === 'object')
                 {
-                    current = current[item];
+                    this.craeteWatch(parent[key], path === '' ? key : path + '.' + key);
                 }
-            });
-            current[lastKey] = newVal;
+            }
         }
+    }
+
+    setModel(path : string, newVal : any){
+        commonUtil.setValueByDot(this, path, newVal);
     }
 }

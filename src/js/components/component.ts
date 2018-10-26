@@ -18,6 +18,7 @@ export default abstract class Component{
         methods: {}
     };
     private defComponents : any;
+    private watchers : Array<Object> = [];
 
     constructor(options : any){
         this.options = $.extend({}, this.defOpt, options);
@@ -39,6 +40,25 @@ export default abstract class Component{
             {
                 this[key] = this.options.methods[key];
             }
+        }
+    }
+
+    createWatcher(path : string, callback : Function){
+        this.watchers.push({
+            path : path,
+            callback : callback
+        });
+    }
+
+    notifyWatcher(path : string, val : any){
+        if (this.watchers.length > 0)
+        {
+            this.watchers.forEach((item)=>{
+                if ((<any>item).path === path)
+                {
+                    (<any>item).callback.apply(this, [val]);
+                }
+            });
         }
     }
 }

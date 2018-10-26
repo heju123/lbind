@@ -38,7 +38,7 @@ export default class EventBus{
         }
     }
     handleEvent(type : string, sourceEvent : any){
-        commonUtil.recursiveVNode(this.vNode, (node)=>{
+        commonUtil.recursiveTree(this.vNode, (node)=>{
             this.executeEvent(node, type, sourceEvent);
         });
     }

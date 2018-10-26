@@ -12,16 +12,64 @@ let commonUtil : any = {
         }
     },
     /** 递归遍历树 */
-    recursiveVNode: (parent : VNode, callback : Function) => {
+    recursiveTree: (parent : any, callback : Function) => {
         if (parent)
         {
             callback.apply(this, [parent]);
             if (parent.children && parent.children.length > 0)
             {
                 parent.children.forEach((item)=>{
-                    commonUtil.recursiveVNode(item, callback);
+                    commonUtil.recursiveTree(item, callback);
                 });
             }
+        }
+    },
+    /** 遍历a.b.c这种格式的值 */
+    literateDotKey : (path : string, callback : Function) => {
+        let itemsMatch = path.match(/(\w|\$)+/g);
+        itemsMatch.forEach((item, index)=>{
+            callback(item, index, itemsMatch.length);
+        });
+    },
+    getValueByDot : (inst : any, path : string) => {
+        let lastDot = path.lastIndexOf('.');
+        if (lastDot === -1)
+        {
+            return inst[path];
+        }
+        else
+        {
+            let cutStr = path.substring(0, lastDot);
+            let lastKey = path.substring(lastDot + 1, path.length);
+            let current : any = inst;
+            commonUtil.literateDotKey(cutStr,(item, index, maxLen)=>{
+                if (current[item])
+                {
+                    current = current[item];
+                }
+            });
+            return current[lastKey];
+        }
+    },
+    /** 设置a.b.c */
+    setValueByDot : (inst : any, path : string, newVal : any) => {
+        let lastDot = path.lastIndexOf('.');
+        if (lastDot === -1)
+        {
+            inst[path] = newVal;
+        }
+        else
+        {
+            let cutStr = path.substring(0, lastDot);
+            let lastKey = path.substring(lastDot + 1, path.length);
+            let current : any = inst;
+            commonUtil.literateDotKey(cutStr,(item, index, maxLen)=>{
+                if (current[item])
+                {
+                    current = current[item];
+                }
+            });
+            current[lastKey] = newVal;
         }
     }
 };

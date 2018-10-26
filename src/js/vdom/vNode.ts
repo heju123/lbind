@@ -37,9 +37,31 @@ export default class VNode{
         }
     }
 
+    setDomVal(val : any){
+        if (this.dom)
+        {
+            if ((<HTMLInputElement>this.dom).type === 'checkbox'
+                || (<HTMLInputElement>this.dom).type === 'radio')
+            {
+                if (val)
+                {
+                    $(this.dom).prop('checked', true);
+                }
+                else
+                {
+                    $(this.dom).prop('checked', false);
+                }
+            }
+            else
+            {
+                $(this.dom).val(val);
+            }
+        }
+    }
+
     /** 创建单向绑定 */
     createOnewayBind(modelKey : string, callback : Function){
-        this.component.model.createModel(modelKey, callback);
+        this.component.createWatcher(modelKey, callback);
     }
 
     /** 创建双向绑定 */
@@ -48,26 +70,8 @@ export default class VNode{
         {
             case 'lb-model' :
                 //model to dom
-                this.component.model.createModel(modelKey, (newVal)=>{
-                    if (this.dom)
-                    {
-                        if ((<HTMLInputElement>this.dom).type === 'checkbox'
-                            || (<HTMLInputElement>this.dom).type === 'radio')
-                        {
-                            if (newVal)
-                            {
-                                $(this.dom).prop('checked', true);
-                            }
-                            else
-                            {
-                                $(this.dom).prop('checked', false);
-                            }
-                        }
-                        else
-                        {
-                            $(this.dom).val(newVal);
-                        }
-                    }
+                this.component.createWatcher(modelKey, (newVal)=>{
+                    this.setDomVal(newVal);
                 });
                 //dom to model
                 if (this.dom)

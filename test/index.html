@@ -30,7 +30,12 @@
                     testInput: 'fdsfsdf',
                     car: 'opel',
                     testCheckbox: true
-                }
+                },
+                arrayTest: [
+                    {aaa:'111'},
+                    'grger',
+                    3424324
+                ]
             };
             var test = new Lbind({
                 el: '#app',
@@ -38,16 +43,20 @@
                 model: model,
                 methods : {
                     testClick(str, num, catalog, width){
-                        this.model.topForm.testInput = '123';
+                        this.model.data.topForm.testInput = '123';
                         console.log(str, num, catalog, width);
-                        this.model.catalog.name = '改变测试1111';
-                        this.model.topForm = {};
+                        this.model.data.catalog.name = '改变测试1111';
+                        this.model.data.topForm = {
+                            aaa : 123,
+                            bbb : {},
+                            ccc : 'fsdfsdfs'
+                        };
                     },
                     getWidth(){
                         return 333;
                     },
                     getValues(){
-                        console.log(this.model.topForm);
+                        console.log(this.model.data.topForm);
                     }
                 }
             });

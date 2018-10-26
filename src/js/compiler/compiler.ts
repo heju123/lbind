@@ -4,6 +4,7 @@ import evalUtil from "@/js/utils/evalUtil";
 import Model from "@/js/model/model";
 import EventHandler from "@/js/event/eventHandler";
 import Component from "@/js/components/component";
+import commonUtil from "@/js/utils/commonUtil";
 
 /** 树形结构转换成dom元素 */
 export default class Compiler{
@@ -24,7 +25,7 @@ export default class Compiler{
         while ((result = reg.exec(node.text)) != null){
             node.createOnewayBind(result[1], (newVal)=>{});
             regExp = new RegExp(result[0], 'g');
-            modelValue = evalUtil.evalDotSyntax(result[1], this.component.model);
+            modelValue = evalUtil.evalDotSyntax(result[1], this.component.model.data);
             if (modelValue)
             {
                 ret = ret.replace(regExp, modelValue);
@@ -55,6 +56,10 @@ export default class Compiler{
         else if (attrName === 'lb-model')
         {
             node.create2WayBind(<string>attrVal, attrName);
+            if (attrVal !== undefined)
+            {
+                node.setDomVal(commonUtil.getValueByDot(this.component.model.data, attrVal));
+            }
         }
     }
 
