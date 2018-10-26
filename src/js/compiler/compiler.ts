@@ -25,7 +25,7 @@ export default class Compiler{
         while ((result = reg.exec(node.text)) != null){
             node.createOnewayBind(result[1], (newVal)=>{});
             regExp = new RegExp(result[0], 'g');
-            modelValue = evalUtil.evalDotSyntax(result[1], this.component.model.data);
+            modelValue = evalUtil.evalDotSyntax(result[1], this.component.$model.data);
             if (modelValue)
             {
                 ret = ret.replace(regExp, modelValue);
@@ -58,7 +58,7 @@ export default class Compiler{
             node.create2WayBind(<string>attrVal, attrName);
             if (attrVal !== undefined)
             {
-                node.setDomVal(commonUtil.getValueByDot(this.component.model.data, attrVal));
+                node.setDomVal(commonUtil.getValueByDot(this.component.$model.data, attrVal));
             }
         }
     }

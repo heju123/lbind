@@ -14,37 +14,51 @@ export default class Model {
         this.component = component;
         this.data = data;
         this.structure = {};
-        this.craeteWatch(this.data, '');
+        this.recursiveCreateWatch(this.data, '');
     }
 
-    private defineProp(parent : any, key : any, path : string){
+    /** 对象改变的时候子节点 */
+    private notifyChildren(current : any, path : string, oldStruct : Object){
+        for (let key in oldStruct)
+        {
+            this.component.notifyWatcher(path === '' ? key : path + '.' + key, current[key]);
+            if (typeof(current[key]) === 'object' && oldStruct[key].type === 'object')//必须当前的和以前的结构相同
+            {
+                this.notifyChildren(current[key], path === '' ? key : path + '.' + key, oldStruct[key]);
+            }
+        }
+    }
+
+    private createWatch(parent : any, key : any, path : string){
         let self = this;
         let value;
         let oriVal = parent[key];
-        let setFunc = function(newValue){
-            value = newValue;
-            let oldStruct = commonUtil.getValueByDot(self.structure, path);
-            if (oldStruct && oldStruct.type === 'object')
-            {
-                commonUtil.setValueByDot(self.structure, path, {});
-                self.craeteWatch(parent[key], path);
-            }
-            self.component.notifyWatcher(path, parent[key]);
-        };
         Object.defineProperty(parent, key, {
             get : function(){
                 return value;
             },
-            set : setFunc
+            set : function(newValue){
+                value = newValue;
+                let oldStruct = commonUtil.getValueByDot(self.structure, path);
+                if (oldStruct && oldStruct.type === 'object')//对象改变，要重新生成structure并通知子对象
+                {
+                    self.notifyChildren(parent[key], path, oldStruct);
+                    commonUtil.setValueByDot(self.structure, path, {});//重新生成structure
+                    self.recursiveCreateWatch(parent[key], path);
+                }
+                self.component.notifyWatcher(path, parent[key]);
+            }
         });
         parent[key] = oriVal;
         commonUtil.setValueByDot(self.structure, path, {
-            type: typeof(oriVal),
-            set: setFunc
+            type: typeof(oriVal)
         });
     }
 
-    private craeteWatch(parent : any, path : string){
+    /**
+     * 递归创建监听
+     */
+    private recursiveCreateWatch(parent : any, path : string){
         if (!parent)
         {
             return undefined;
@@ -52,10 +66,10 @@ export default class Model {
         if (parent instanceof Array)
         {
             parent.forEach((item, index)=>{
-                this.defineProp(parent, index, path === '' ? index.toString() : path + '.' + index.toString());
+                this.createWatch(parent, index, path === '' ? index.toString() : path + '.' + index.toString());
                 if (typeof(parent[index]) === 'object')
                 {
-                    this.craeteWatch(parent[index], path === '' ? index.toString() : path + '.' + index.toString());
+                    this.recursiveCreateWatch(parent[index], path === '' ? index.toString() : path + '.' + index.toString());
                 }
             });
         }
@@ -63,16 +77,39 @@ export default class Model {
         {
             for (let key in parent)
             {
-                this.defineProp(parent, key, path === '' ? key : path + '.' + key);
+                this.createWatch(parent, key, path === '' ? key : path + '.' + key);
                 if (typeof(parent[key]) === 'object')
                 {
-                    this.craeteWatch(parent[key], path === '' ? key : path + '.' + key);
+                    this.recursiveCreateWatch(parent[key], path === '' ? key : path + '.' + key);
                 }
             }
         }
     }
 
+    /** 创建属性 */
+    createModel(path : string){
+        let current : any = this.data;
+        let currPath = '';
+        commonUtil.literateDotKey(path, (key, index, maxLen)=>{
+            currPath = currPath === '' ? key : currPath + '.' + key;
+            if (!current.hasOwnProperty(key))
+            {
+                if (index < maxLen - 1)//不是最后一个，则定义为对象
+                {
+                    current[key] = {};
+                    this.createWatch(current, key, currPath);
+                }
+                else
+                {
+                    current[key] = '';
+                    this.createWatch(current, key, currPath);
+                }
+            }
+            current = current[key];
+        });
+    }
+
     setModel(path : string, newVal : any){
-        commonUtil.setValueByDot(this, path, newVal);
+        commonUtil.setValueByDot(this.data, path, newVal);
     }
 }

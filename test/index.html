@@ -43,10 +43,10 @@
                 model: model,
                 methods : {
                     testClick(str, num, catalog, width){
-                        this.model.data.topForm.testInput = '123';
+                        this.$model.data.topForm.testInput = '123';
                         console.log(str, num, catalog, width);
-                        this.model.data.catalog.name = '改变测试1111';
-                        this.model.data.topForm = {
+                        this.$model.data.catalog.name = '改变测试1111';
+                        this.$model.data.topForm = {
                             aaa : 123,
                             bbb : {},
                             ccc : 'fsdfsdfs'
@@ -56,7 +56,7 @@
                         return 333;
                     },
                     getValues(){
-                        console.log(this.model.data.topForm);
+                        console.log(this.$model, this.$model.data.topForm);
                     }
                 }
             });
