@@ -61,7 +61,7 @@ export default class VNode{
 
     /** 创建单向绑定 */
     createOnewayBind(modelKey : string, callback : Function){
-        this.component.createWatcher(modelKey, callback);
+        this.component.createWatcher(this, modelKey, callback);
     }
 
     /** 创建双向绑定 */
@@ -71,7 +71,7 @@ export default class VNode{
             case 'lb-model' :
                 //model to dom
                 this.component.$model.createModel(modelKey);//如果有为空的属性，则自动创建
-                this.component.createWatcher(modelKey, (newVal)=>{
+                this.component.createWatcher(this, modelKey, (newVal)=>{
                     this.setDomVal(newVal);
                 });
                 //dom to model

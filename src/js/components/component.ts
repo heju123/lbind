@@ -43,8 +43,9 @@ export default abstract class Component{
         }
     }
 
-    createWatcher(path : string, callback : Function){
+    createWatcher(node : VNode, path : string, callback : Function){
         this.$watchers.push({
+            node : node,
             path : path,
             callback : callback
         });
