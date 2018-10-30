@@ -23,7 +23,9 @@ export default class Compiler{
         let regExp;
         let modelValue;
         while ((result = reg.exec(node.text)) != null){
-            node.createOnewayBind(result[1], (newVal)=>{});
+            this.component.createWatcher(node, result[1], (newVal)=>{
+                this.regenerateNode(node);
+            });
             regExp = new RegExp(result[0], 'g');
             modelValue = evalUtil.evalDotSyntax(result[1], this.component.$model.data);
             if (modelValue)
@@ -73,7 +75,7 @@ export default class Compiler{
         return true;
     }
 
-    private generateDom(node : VNode) : HTMLElement | Text{
+    public generateDom(node : VNode) : HTMLElement | Text{
         if (!this.disposeIf(node))
         {
             return undefined;
@@ -107,6 +109,17 @@ export default class Compiler{
             }
             return dom;
         }
+    }
+
+    /**
+     * 重新生成节点
+     */
+    private regenerateNode(node : TextNode){
+        this.component.removeWatcher(node);
+        let oriDom = node.dom;
+        let newDom = this.generateDom(node);
+        node.parent.dom.insertBefore(newDom, oriDom);
+        node.parent.dom.removeChild(oriDom);
     }
 
     compile() : HTMLElement | Text{

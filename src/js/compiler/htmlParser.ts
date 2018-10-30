@@ -46,6 +46,7 @@ export default class HtmlParser{
         if (txtContent)
         {
             let node = new TextNode({
+                parent: parent,
                 templateIndex: lastEndIdx + 1,
                 text: txtContent,
                 component: this.component

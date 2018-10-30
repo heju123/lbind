@@ -51,6 +51,19 @@ export default abstract class Component{
         });
     }
 
+    removeWatcher(node : VNode){
+        let watcher;
+        for (let i = 0; i < this.$watchers.length; i++)
+        {
+            watcher = this.$watchers[i];
+            if ((<any>watcher).node === node)
+            {
+                this.$watchers.splice(i, 1);
+                i--;
+            }
+        }
+    }
+
     notifyWatcher(path : string, val : any){
         if (this.$watchers.length > 0)
         {

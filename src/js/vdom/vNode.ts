@@ -59,11 +59,6 @@ export default class VNode{
         }
     }
 
-    /** 创建单向绑定 */
-    createOnewayBind(modelKey : string, callback : Function){
-        this.component.createWatcher(this, modelKey, callback);
-    }
-
     /** 创建双向绑定 */
     create2WayBind(modelKey : string, type : string){
         switch (type)
