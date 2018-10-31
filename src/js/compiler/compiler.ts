@@ -79,6 +79,7 @@ export default class Compiler{
             {
                 let textDom = this.generateHiddenText('lb-if=\"' + node.ifSentence + '\"');
                 node.dom = textDom;
+                (<any>textDom).vNode = node;
                 return textDom;
             }
         }
@@ -87,12 +88,14 @@ export default class Compiler{
             let text = this.generateText(node);
             let textDom : Text = document.createTextNode(text);
             node.dom = textDom;
+            (<any>textDom).vNode = node;
             return textDom;
         }
         else
         {
             let dom : HTMLElement = document.createElement(node.tagName);
             node.dom = dom;
+            (<any>dom).vNode = node;
             if (node.children && node.children.length > 0)
             {
                 let childDom : HTMLElement | Text | Comment;

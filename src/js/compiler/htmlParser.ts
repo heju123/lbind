@@ -17,7 +17,7 @@ export default class HtmlParser{
 
     parseAttr(vnode : VNode, str : string) : any{
         //idx=1：name；idx=4：value
-        let reg = new RegExp(/((\w|\-)+)(\=\"((.)*?)\")?/, 'g');
+        let reg = new RegExp(/((\w|\-)+)(\=\"((.)*?)\")?/, 'g');//属性也可能有没有等号的情况
         let result;
         let attrs = {};
         while ((result = reg.exec(str)) != null){
