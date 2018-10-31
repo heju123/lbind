@@ -10,9 +10,11 @@ export default class VNode{
     children: Array<VNode> = [];
     parent: VNode;
     templateIndex: number;
-    dom: HTMLElement | Text;
+    dom: HTMLElement | Text | Comment;
     events: Array<EventHandler> = [];
     component : Component;
+    ifSentence: string;
+    showSentence: string;
 
     constructor(attr){
         if (attr.id)

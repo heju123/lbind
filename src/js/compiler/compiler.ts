@@ -65,20 +65,22 @@ export default class Compiler{
         }
     }
 
-    private disposeIf(node : VNode){
-        if (node.attributes && node.attributes['lb-if'])
-        {
-            let command : string = node.attributes['lb-if'];
-            let func = new Function(undefined, command);
-            return func.apply(this.component, []);
-        }
-        return true;
+    private generateHiddenText(text : string) : Comment{
+        let textDom : Comment = document.createComment(text);
+        return textDom;
     }
 
-    public generateDom(node : VNode) : HTMLElement | Text{
-        if (!this.disposeIf(node))
+    public generateDom(node : VNode) : HTMLElement | Text | Comment{
+        if (node.ifSentence !== undefined)//if
         {
-            return undefined;
+            let ifResult = commonUtil.getSentenceResult(this.component, node.ifSentence);
+            this.component.addDynamicSentence('if', node, node.ifSentence, ifResult);
+            if (ifResult === false || ifResult === undefined)
+            {
+                let textDom = this.generateHiddenText('lb-if=\"' + node.ifSentence + '\"');
+                node.dom = textDom;
+                return textDom;
+            }
         }
         if (node instanceof TextNode)
         {
@@ -93,7 +95,7 @@ export default class Compiler{
             node.dom = dom;
             if (node.children && node.children.length > 0)
             {
-                let childDom : HTMLElement | Text;
+                let childDom : HTMLElement | Text | Comment;
                 node.children.forEach((child)=>{
                     childDom = this.generateDom(child);
                     if (childDom)
@@ -104,8 +106,17 @@ export default class Compiler{
             }
             for (let key in node.attributes)
             {
-                dom.setAttribute(key, node.attributes[key]);
+                dom.setAttribute(key, node.attributes[key] === undefined ? '' : node.attributes[key]);
                 this.disposeAttr(node, key, node.attributes[key]);
+            }
+            if (node.showSentence !== undefined)//show
+            {
+                let showResult = commonUtil.getSentenceResult(this.component, node.showSentence);
+                this.component.addDynamicSentence('show', node, node.showSentence, showResult);
+                if (showResult === false || showResult === undefined)
+                {
+                    dom.style.display = 'none';
+                }
             }
             return dom;
         }
@@ -114,15 +125,15 @@ export default class Compiler{
     /**
      * 重新生成节点
      */
-    private regenerateNode(node : TextNode){
-        this.component.removeWatcher(node);
+    public regenerateNode(node : VNode){
+        this.component.cleanNode(node);
         let oriDom = node.dom;
         let newDom = this.generateDom(node);
         node.parent.dom.insertBefore(newDom, oriDom);
         node.parent.dom.removeChild(oriDom);
     }
 
-    compile() : HTMLElement | Text{
+    compile() : HTMLElement | Text | Comment{
         let dom = this.generateDom(this.root);
         return dom;
     }

@@ -15,13 +15,21 @@ export default class HtmlParser{
         this.component = component;
     }
 
-    parseAttr(str : string) : any{
-        //idx=1：name；idx=3：value
-        let reg = new RegExp(/((\w|\-)+)\=\"((\w|\-|\.|\=|\$|\s|,|;|\'|\(|\)|[\u4e00-\u9fa5])*)\"/, 'g');
+    parseAttr(vnode : VNode, str : string) : any{
+        //idx=1：name；idx=4：value
+        let reg = new RegExp(/((\w|\-)+)(\=\"((.)*?)\")?/, 'g');
         let result;
         let attrs = {};
         while ((result = reg.exec(str)) != null){
-            attrs[result[1]] = result[3];
+            attrs[result[1]] = result[4];
+            if (result[1] === 'lb-if')
+            {
+                vnode.ifSentence = result[4];
+            }
+            else if (result[1] === 'lb-show')
+            {
+                vnode.showSentence = result[4];
+            }
         }
         return attrs;
     }
@@ -56,8 +64,8 @@ export default class HtmlParser{
     }
 
     parse() : VNode{
-        //idx=2：tagName；idx=4：attributes；idx=8：tagEnd
-        var reg = new RegExp(/(\<((\w|\-)+)(((\s|\r|\n)+(\w|\-)+\=\".*?\")*?)\>)|(\<\/((\w|\-)+)\>)/, 'g');
+        //idx=2：tagName；idx=4：attributes；idx=9：tagEnd
+        var reg = new RegExp(/(\<((\w|\-)+)(((\s|\r|\n)+(\w|\-)+(\=\".*?\")?)*?)\>)|(\<\/((\w|\-)+)\>)/, 'g');
         let result;
         let all = [];
         while ((result = reg.exec(this.html)) != null){
@@ -76,7 +84,7 @@ export default class HtmlParser{
                     component: this.component
                 });
                 if (match[4]) {
-                    vnode.attributes = this.parseAttr(match[4]);
+                    vnode.attributes = this.parseAttr(vnode, match[4]);
                 }
                 if (parent) {
                     vnode.parent = parent;
@@ -91,10 +99,10 @@ export default class HtmlParser{
                     nodeStack.push(vnode);
                 }
             }
-            else if (match[8])
+            else if (match[9])
             {
                 this.extractNodeText(parent, lastEndIdx, match.index);
-                if (match[8] !== 'input')
+                if (match[9] !== 'input')
                 {
                     let popItem = nodeStack.pop();
                     if (popItem) {

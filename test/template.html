@@ -18,8 +18,10 @@
         <input id="testRadio" type="radio" lb-model="topForm.testRadio">
         <label for="testRadio">testRadio</label>
     </div>
-    <div lb-if="this.$model.data.topForm.testCheckbox">testIf1111111</div>
-    <div lb-if="!this.$model.data.topForm.testCheckbox">testif2222222222</div>
+    <div lb-if="this.$model.data.topForm.testCheckbox === true">testIf1111111</div>
+    <div lb-else>testIf11111else...</div>
+    <div lb-if="this.$model.data.topForm.testCheckbox === false">testif2222222222</div>
+    <div lb-show="this.$model.data.topForm.testCheckbox === true">testShow111111111</div>
     <div class="entity-content">
         gregergweg
         <div class="entity-c-left">

@@ -47,6 +47,7 @@ export default class Model {
                     self.recursiveCreateWatch(parent[key], path);
                 }
                 self.component.notifyWatcher(path, parent[key]);
+                self.component.checkDynamicSentences();
             }
         });
         parent[key] = oriVal;

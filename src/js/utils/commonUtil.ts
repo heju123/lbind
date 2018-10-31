@@ -31,7 +31,7 @@ let commonUtil : any = {
             callback(item, index, itemsMatch.length);
         });
     },
-    getValueByDot : (inst : any, path : string) => {
+    getValueByDot : (inst : any, path : string) : any => {
         let lastDot = path.lastIndexOf('.');
         if (lastDot === -1)
         {
@@ -71,6 +71,11 @@ let commonUtil : any = {
             });
             current[lastKey] = newVal;
         }
+    },
+    /** 执行代码片段并返回结果 */
+    getSentenceResult : (context : any, code : string) : any => {
+        let func = new Function(undefined, 'return ' + code);
+        return func.apply(context, []);
     }
 };
 export default commonUtil;
