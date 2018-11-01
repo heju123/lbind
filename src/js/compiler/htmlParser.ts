@@ -30,6 +30,14 @@ export default class HtmlParser{
             {
                 vnode.showSentence = result[4];
             }
+            else if (result[1] === 'lb-for')
+            {
+                //idx=1：child；idx=2：list
+                let reg = new RegExp(/(.*?)\s+(?:in)\s+(.*)/, 'g');
+                let ret = reg.exec(result[4]);
+                vnode.forItem = ret[1];
+                vnode.forCollection = ret[2];
+            }
         }
         return attrs;
     }

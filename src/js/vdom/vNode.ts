@@ -15,6 +15,8 @@ export default class VNode{
     component : Component;
     ifSentence: string;
     showSentence: string;
+    forItem: string;
+    forCollection: string;
 
     constructor(attr){
         if (attr.id)

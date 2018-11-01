@@ -22,6 +22,10 @@
     <div lb-else>testIf11111else...</div>
     <div lb-if="this.$model.data.topForm.testCheckbox === false">testif2222222222</div>
     <div lb-show="this.$model.data.topForm.testCheckbox === true">testShow111111111</div>
+    <div lb-for="item in repeatTest">
+        {{item.name}}
+        <div class="gregregerg">gregregreg{{item.name}}</div>
+    </div>
     <div class="entity-content">
         gregergweg
         <div class="entity-c-left">
