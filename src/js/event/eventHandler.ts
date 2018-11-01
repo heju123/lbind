@@ -1,6 +1,6 @@
 export default class EventHandler{
     type : string;
-    callback : Function;
+    callback : string;
     events : Object = {};
 
     constructor(type : string){

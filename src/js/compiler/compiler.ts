@@ -27,7 +27,7 @@ export default class Compiler{
                 this.regenerateNode(node);
             });
             regExp = new RegExp(result[0], 'g');
-            modelValue = evalUtil.evalDotSyntax(result[1], this.component.$model.data);
+            modelValue = evalUtil.evalDotSyntax(result[1], node.model.data);
             if (modelValue)
             {
                 ret = ret.replace(regExp, modelValue);
@@ -39,11 +39,6 @@ export default class Compiler{
     private createEventHandler(node : VNode, type : string, funStr : Function | string){
         let handler = new EventHandler(type);
         if (typeof(funStr) === 'string')
-        {
-            let func = new Function(undefined, funStr);
-            handler.callback = func;
-        }
-        else
         {
             handler.callback = funStr;
         }
@@ -60,7 +55,7 @@ export default class Compiler{
             node.create2WayBind(<string>attrVal, attrName);
             if (attrVal !== undefined)
             {
-                node.setDomVal(commonUtil.getValueByDot(this.component.$model.data, attrVal));
+                node.setDomVal(commonUtil.getValueByDot(node.model.data, attrVal));
             }
         }
     }

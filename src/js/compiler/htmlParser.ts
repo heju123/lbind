@@ -65,7 +65,8 @@ export default class HtmlParser{
                 parent: parent,
                 templateIndex: lastEndIdx + 1,
                 text: txtContent,
-                component: this.component
+                component: this.component,
+                model: parent ? parent.model : this.component.$model
             });
             parent.children.push(node);
         }
@@ -89,7 +90,8 @@ export default class HtmlParser{
                 vnode = new VNode({
                     tagName: match[2],
                     templateIndex: match.index,
-                    component: this.component
+                    component: this.component,
+                    model: parent ? parent.model : this.component.$model
                 });
                 if (match[4]) {
                     vnode.attributes = this.parseAttr(vnode, match[4]);

@@ -17,10 +17,11 @@ export default class EventBus{
 
     /** 触发事件 */
     triggerEvent(node : VNode, eventHandler : EventHandler, sourceEvent : any){
-        let event = new Event(eventHandler.type);
-        event.node = node;
-        event.sourceEvent = sourceEvent;
-        eventHandler.callback.apply(this.component, [event]);
+        let $event = new Event(eventHandler.type);
+        $event.node = node;
+        $event.sourceEvent = sourceEvent;
+        let func = new Function('$event', '$model', eventHandler.callback);
+        func.apply(this.component, [$event, node.model]);
     }
     executeEvent(node : VNode, type : string, sourceEvent : any){
         if (node.events.length > 0)

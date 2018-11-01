@@ -13,6 +13,7 @@ export default class VNode{
     dom: HTMLElement | Text | Comment;
     events: Array<EventHandler> = [];
     component : Component;
+    model : Model;
     ifSentence: string;
     showSentence: string;
     forItem: string;
@@ -38,6 +39,10 @@ export default class VNode{
         if (attr.component)
         {
             this.component = attr.component
+        }
+        if (attr.model)
+        {
+            this.model = attr.model;
         }
     }
 
@@ -69,7 +74,7 @@ export default class VNode{
         {
             case 'lb-model' :
                 //model to dom
-                this.component.$model.createModel(modelKey);//如果有为空的属性，则自动创建
+                this.model.createModel(modelKey);//如果有为空的属性，则自动创建
                 this.component.createWatcher(this, modelKey, (newVal)=>{
                     this.setDomVal(newVal);
                 });
@@ -81,21 +86,21 @@ export default class VNode{
                         if ((<HTMLInputElement>this.dom).type === 'text')
                         {
                             commonUtil.addDomEventListener(this.dom, 'input', (e)=>{
-                                this.component.$model.setModel(modelKey, (<HTMLInputElement>this.dom).value);
+                                this.model.setModel(modelKey, (<HTMLInputElement>this.dom).value);
                             }, false);
                         }
                         else if ((<HTMLInputElement>this.dom).type === 'checkbox'
                             || (<HTMLInputElement>this.dom).type === 'radio')
                         {
                             commonUtil.addDomEventListener(this.dom, 'change', (e)=>{
-                                this.component.$model.setModel(modelKey, (<HTMLInputElement>this.dom).checked);
+                                this.model.setModel(modelKey, (<HTMLInputElement>this.dom).checked);
                             }, false);
                         }
                     }
                     else if ((<Element>this.dom).tagName === 'SELECT')//input
                     {
                         commonUtil.addDomEventListener(this.dom, 'change', (e)=>{
-                            this.component.$model.setModel(modelKey, (<HTMLInputElement>this.dom).value);
+                            this.model.setModel(modelKey, (<HTMLInputElement>this.dom).value);
                         }, false);
                     }
                 }

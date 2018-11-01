@@ -48,7 +48,8 @@
                 template: res,
                 model: model,
                 methods : {
-                    testClick(str, num, catalog, width){
+                    testClick($event, str, num, catalog, width){
+                        console.log($event);
                         this.$model.data.topForm.testInput = '123';
                         console.log(str, num, catalog, width);
                         this.$model.data.catalog.name = '改变测试1111';
