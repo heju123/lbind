@@ -22,7 +22,7 @@
     <div lb-else>testIf11111else...</div>
     <div lb-if="this.$model.data.topForm.testCheckbox === false">testif2222222222</div>
     <div lb-show="this.$model.data.topForm.testCheckbox === true">testShow111111111</div>
-    <div lb-for="item in repeatTest">
+    <div lb-for="item in topForm.repeatTest">
         {{item.name}}
         <div class="gregregerg">gregregreg{{item.name}}</div>
     </div>
@@ -75,7 +75,7 @@
                             <a>{{metadata}}</a>
                         </li>
                         <li ng-class="{'active' : inst.tabs.rigthTop == 'catalogMetadate'}" ng-click="inst.tabs.change('catalogMetadate','rigthTop')"
-                            ng-show="inst.selectedCatalog && inst.selectedCatalog.code !== 'program'">
+                            ng-show="inst.selectedCatalog && inst.selectedCatalog.code !== 'program'" type="type:{{catalog.type}}">
                             <a>{{catalog.name}};type：{{catalog.type}}</a>
                         </li>
                         <li ng-class="{'active' : inst.tabs.rigthTop == 'copyrightMetadate'}" ng-click="inst.tabs.change('copyrightMetadate','rigthTop')"

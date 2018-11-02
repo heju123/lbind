@@ -10,7 +10,7 @@ export default class VNode{
     children: Array<VNode> = [];
     parent: VNode;
     templateIndex: number;
-    dom: HTMLElement | Text | Comment;
+    dom: HTMLElement | Text | Comment | Array<HTMLElement | Text | Comment>;
     events: Array<EventHandler> = [];
     component : Component;
     model : Model;

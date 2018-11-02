@@ -16,24 +16,29 @@ export default class Compiler{
         this.component = component;
     }
 
-    private generateText(node : TextNode) : string{
-        let ret : string = node.text;
+    /** 向text查询model符号，并绑定 */
+    private bindTextWithModel(node : VNode, text : string) : string{
+        let ret : string = text;
         let reg = new RegExp(/\{\{(.*?)\}\}/, 'g');
         let result;
         let regExp;
         let modelValue;
-        while ((result = reg.exec(node.text)) != null){
+        while ((result = reg.exec(text)) != null){
             this.component.createWatcher(node, result[1], (newVal)=>{
                 this.regenerateNode(node);
             });
             regExp = new RegExp(result[0], 'g');
-            modelValue = evalUtil.evalDotSyntax(result[1], node.model.data);
+            modelValue = node.model.getModelData(result[1]);
             if (modelValue)
             {
                 ret = ret.replace(regExp, modelValue);
             }
         }
         return ret;
+    }
+
+    private generateText(node : TextNode) : string{
+        return this.bindTextWithModel(node, node.text);
     }
 
     private createEventHandler(node : VNode, type : string, funStr : Function | string){
@@ -65,7 +70,7 @@ export default class Compiler{
         return textDom;
     }
 
-    public generateDom(node : VNode) : HTMLElement | Text | Comment{
+    public generateDom$1(node : VNode) : HTMLElement | Text | Comment{
         if (node.ifSentence !== undefined)//if
         {
             let ifResult = commonUtil.getSentenceResult(this.component, node.ifSentence);
@@ -73,7 +78,14 @@ export default class Compiler{
             if (ifResult === false || ifResult === undefined)
             {
                 let textDom = this.generateHiddenText('lb-if=\"' + node.ifSentence + '\"');
-                node.dom = textDom;
+                if (!(node.dom instanceof Array))
+                {
+                    node.dom = textDom;
+                }
+                else if (node.dom instanceof Array)
+                {
+                    node.dom.push(textDom);
+                }
                 (<any>textDom).vNode = node;
                 return textDom;
             }
@@ -82,29 +94,52 @@ export default class Compiler{
         {
             let text = this.generateText(node);
             let textDom : Text = document.createTextNode(text);
-            node.dom = textDom;
+            if (!(node.dom instanceof Array))
+            {
+                node.dom = textDom;
+            }
+            else if (node.dom instanceof Array)
+            {
+                node.dom.push(textDom);
+            }
             (<any>textDom).vNode = node;
             return textDom;
         }
         else
         {
             let dom : HTMLElement = document.createElement(node.tagName);
-            node.dom = dom;
+            if (!(node.dom instanceof Array))
+            {
+                node.dom = dom;
+            }
+            else if (node.dom instanceof Array)
+            {
+                node.dom.push(dom);
+            }
             (<any>dom).vNode = node;
             if (node.children && node.children.length > 0)
             {
-                let childDom : HTMLElement | Text | Comment;
+                let childDom : HTMLElement | Text | Comment | Array<HTMLElement | Text | Comment>;
                 node.children.forEach((child)=>{
                     childDom = this.generateDom(child);
                     if (childDom)
                     {
-                        dom.appendChild(childDom);
+                        if (childDom instanceof Array)
+                        {
+                            childDom.forEach((child)=>{
+                                dom.appendChild(child);
+                            });
+                        }
+                        else
+                        {
+                            dom.appendChild(childDom);
+                        }
                     }
                 });
             }
             for (let key in node.attributes)
             {
-                dom.setAttribute(key, node.attributes[key] === undefined ? '' : node.attributes[key]);
+                dom.setAttribute(key, node.attributes[key] === undefined ? '' : this.bindTextWithModel(node, node.attributes[key]));
                 this.disposeAttr(node, key, node.attributes[key]);
             }
             if (node.showSentence !== undefined)//show
@@ -120,6 +155,25 @@ export default class Compiler{
         }
     }
 
+    public generateDom(node : VNode) : HTMLElement | Text | Comment | Array<HTMLElement | Text | Comment>{
+        if (node.forCollection && node.forItem)
+        {
+            // node.dom = [];
+            // let collection = commonUtil.getValueByDot(node.model.data, node.forCollection);
+            // let newModel;
+            // collection.forEach((item)=>{
+            //     newModel = Object.create(node.model);
+            //     newModel.data = Object.create(node.model.data);
+            //     newModel.data[node.forItem] = item;
+            //     console.log(newModel);
+            // });
+        }
+        else
+        {
+            return this.generateDom$1(node);
+        }
+    }
+
     /**
      * 重新生成节点
      */
@@ -127,12 +181,24 @@ export default class Compiler{
         this.component.cleanNode(node);
         let oriDom = node.dom;
         let newDom = this.generateDom(node);
-        node.parent.dom.insertBefore(newDom, oriDom);
-        node.parent.dom.removeChild(oriDom);
+        if (newDom instanceof Array)
+        {
+            newDom.forEach((ndom)=>{
+                (<any>node.parent.dom).insertBefore(ndom, oriDom[0]);
+            });
+            (<Array<HTMLElement | Text | Comment>>oriDom).forEach((odom)=>{
+                (<any>node.parent.dom).removeChild(odom);
+            });
+        }
+        else
+        {
+            (<any>node.parent.dom).insertBefore(<HTMLElement | Text | Comment>newDom, <HTMLElement | Text | Comment>oriDom);
+            (<any>node.parent.dom).removeChild(<HTMLElement | Text | Comment>oriDom);
+        }
     }
 
     compile() : HTMLElement | Text | Comment{
-        let dom = this.generateDom(this.root);
+        let dom : HTMLElement | Text | Comment = <HTMLElement | Text | Comment>this.generateDom(this.root);
         return dom;
     }
 }

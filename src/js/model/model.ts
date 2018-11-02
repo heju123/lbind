@@ -1,9 +1,6 @@
-import HtmlParser from "@/js/compiler/htmlParser";
-import Compiler from "@/js/compiler/compiler";
-import VNode from "@/js/vdom/vNode";
-import TextNode from "@/js/vdom/textNode";
 import Component from "@/js/components/component";
 import commonUtil from "@/js/utils/commonUtil";
+import evalUtil from "@/js/utils/evalUtil";
 
 export default class Model {
     component : Component;
@@ -112,5 +109,9 @@ export default class Model {
 
     setModel(path : string, newVal : any){
         commonUtil.setValueByDot(this.data, path, newVal);
+    }
+
+    getModelData(path : string){
+        return evalUtil.evalDotSyntax(path, this.data);
     }
 }
