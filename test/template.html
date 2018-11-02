@@ -2,7 +2,7 @@
     <mam-entity-top entity="inst.entity" site="{{inst.site}}" view-type="{{viewType}}"></mam-entity-top>
     <input type="input" lb-model="topForm.testInput">
     <input type="button" value="按钮测试123" lb-click="alert('32312');">
-    <button type="button" lb-click="this.testClick($event, '123', 321, $model.data.catalog, this.getWidth())">点击测试</button>
+    <button type="button" lb-click="this.testClick($event, '123', 321, this.$model.data.catalog, this.getWidth())">点击测试</button>
     <button type="button" lb-click="this.getValues()">获取值</button>
     <select lb-model="topForm.car">
         <option value="volvo">Volvo</option>
@@ -22,7 +22,7 @@
     <div lb-else>testIf11111else...</div>
     <div lb-if="this.$model.data.topForm.testCheckbox === false">testif2222222222</div>
     <div lb-show="this.$model.data.topForm.testCheckbox === true">testShow111111111</div>
-    <div lb-for="item in topForm.repeatTest">
+    <div lb-for="item in topForm.repeatTest" index="{{$index}}">
         {{item.name}}
         <div class="gregregerg">gregregreg{{item.name}}</div>
     </div>

@@ -20,8 +20,8 @@ export default class EventBus{
         let $event = new Event(eventHandler.type);
         $event.node = node;
         $event.sourceEvent = sourceEvent;
-        let func = new Function('$event', '$model', eventHandler.callback);
-        func.apply(this.component, [$event, node.model]);
+        let func = new Function('$event', eventHandler.callback);
+        func.apply(this.component, [$event]);
     }
     executeEvent(node : VNode, type : string, sourceEvent : any){
         if (node.events.length > 0)
