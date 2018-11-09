@@ -18,22 +18,12 @@ export default class Compiler{
 
     /** 向text查询model符号，并绑定 */
     private bindTextWithModel(node : VNode, text : string) : string{
-        let ret : string = text;
-        let reg = new RegExp(/\{\{(.*?)\}\}/, 'g');
-        let result;
-        let regExp;
-        let modelValue;
-        while ((result = reg.exec(text)) != null){
-            this.component.createWatcher(node, result[1], (newVal)=>{
+        let ret : string = text.replace(/\{\{(.*?)\}\}/g, (outer, content) => {
+            this.component.createWatcher(node, content, (newVal)=>{
                 this.regenerateNode(node);
             });
-            regExp = new RegExp(result[0], 'g');
-            modelValue = node.model.getModelData(result[1]);
-            if (modelValue)
-            {
-                ret = ret.replace(regExp, modelValue);
-            }
-        }
+            return node.model.getModelData(content) || outer;
+        });
         return ret;
     }
 
