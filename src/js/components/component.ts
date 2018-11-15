@@ -10,6 +10,7 @@ export default abstract class Component{
     $compiler : Compiler;
     $vNode : VNode;
     $model : Model;
+    $m : Object;
     $eventBus : EventBus;
     private $options : any;
     private $defOpt : any = {
@@ -29,6 +30,7 @@ export default abstract class Component{
 
         this.$el = $(this.$options.el)[0];
         this.$model = new Model(this, this.$options.model);
+        this.$m = this.$model.data;
         let htmlParser = new HtmlParser(this.$options.template, this);
         this.$vNode = htmlParser.parse();
         this.$compiler = new Compiler(this.$vNode, this);
